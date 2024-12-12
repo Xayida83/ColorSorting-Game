@@ -1,0 +1,29 @@
+#game-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.stack, .empty-slot {
+  width: 65px;
+  height: 150px;
+  border-bottom: 2px solid #1c1a1a;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  background-color: #f9f9f9;
+}
+
+.item-piece {
+  width: 45px;
+  height: 45px;
+  margin: 2px 0;
+  background-color: red;
+  object-fit: contain;
+}
+
+/* .empty-slot {
+  border-style: solid;
+} */
