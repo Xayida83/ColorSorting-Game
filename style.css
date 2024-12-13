@@ -5,31 +5,48 @@
   justify-content: center;
 }
 
-.stack, .empty-slot {
+.stack {
   width: 61px;
   height: 211px;
-  border-bottom: 2px solid #1c1a1a;
+  border: 2px solid #1c1a1a;
+  border-top: none;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
   background-color: #f9f9f9;
+  overflow: hidden;
+  position: relative;
 }
 
+
 .item-piece {
+  transition: transform 0.2s ease;
   width: 45px;
   height: 45px;
   margin: 2px 0;
   background-color: red;
   object-fit: contain;
   cursor: grab;
+  object-fit: contain;
+}
+
+.selected {
+  outline: 2px solid #007bff;
+  transform: scale(1.1); 
   transition: transform 0.2s ease;
 }
 
-.item-piece:active {
-  cursor: grabbing;
-  transform: scale(1.1);
+.stacked {
+  position: absolute;
 }
+
+/* CSS för max 4 objekt */
+.position-0 { bottom: 0; }
+.position-1 { bottom: 35px; }
+.position-2 { bottom: 70px; }
+.position-3 { bottom: 105px; }
+
 
 /* .empty-slot {
   border-style: solid;
