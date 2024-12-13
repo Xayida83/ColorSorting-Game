@@ -6,8 +6,8 @@
 }
 
 .stack, .empty-slot {
-  width: 65px;
-  height: 150px;
+  width: 61px;
+  height: 211px;
   border-bottom: 2px solid #1c1a1a;
   display: flex;
   flex-direction: column;
@@ -22,6 +22,13 @@
   margin: 2px 0;
   background-color: red;
   object-fit: contain;
+  cursor: grab;
+  transition: transform 0.2s ease;
+}
+
+.item-piece:active {
+  cursor: grabbing;
+  transform: scale(1.1);
 }
 
 /* .empty-slot {
