@@ -27,7 +27,7 @@ async function renderGame() {
               itemImg.src = item.image;
               itemImg.alt = item.name;
               itemImg.classList.add("item-piece", `color-${item.name}`);
-              itemImg.draggable = true; // Gör elementet draggable
+              itemImg.draggable = index === 0; // Endast första objektet är draggable
               itemImg.dataset.name = item.name; // Lägg till namn för validering
               itemImg.dataset.index = index; // Spara index i stacken
               addDragEvents(itemImg); // Lägg till drag-event-hanterare
@@ -35,6 +35,8 @@ async function renderGame() {
           });
 
           gameContainer.appendChild(stackDiv);
+          // Lägg till drop-event till stacken
+          addDropEvents(stackDiv);
       });
 
       // Lägg till tomma platser
@@ -73,11 +75,19 @@ function generateShuffledStacks(items) {
 // Lägg till event-hanterare för drag
 function addDragEvents(item) {
   item.addEventListener("dragstart", (e) => {
-      e.dataTransfer.setData("text/plain", JSON.stringify({
-          name: item.dataset.name,
-          index: item.dataset.index,
-          stackId: item.parentNode.dataset.stackId
-      }));
+      const parentStack = item.parentNode;
+      const firstChild = parentStack.querySelector(".item-piece");
+
+      // Kontrollera att endast första barnet kan dras
+      if (item === firstChild) {
+          e.dataTransfer.setData("text/plain", JSON.stringify({
+              name: item.dataset.name,
+              index: item.dataset.index,
+              stackId: parentStack.dataset.stackId
+          }));
+      } else {
+          e.preventDefault(); // Blockera drag för andra element
+      }
   });
 }
 
@@ -92,17 +102,21 @@ function addDropEvents(stack) {
 
       const data = JSON.parse(e.dataTransfer.getData("text/plain"));
       const draggedElement = document.querySelector(`.stack[data-stack-id='${data.stackId}'] .item-piece[data-index='${data.index}']`);
+      const itemsInTarget = stack.querySelectorAll(".item-piece");
 
       // Validera regler
-      if (draggedElement && isValidMove(stack, draggedElement)) {
+      if (draggedElement && isValidMove(stack, draggedElement, itemsInTarget)) {
           stack.appendChild(draggedElement); // Flytta elementet
+
+          // Uppdatera draggable-attributen
+          updateDraggableStates();
       }
   });
 }
 
 // Validera regler
-function isValidMove(targetStack, draggedElement) {
-  const itemsInTarget = targetStack.querySelectorAll(".item-piece");
+function isValidMove(targetStack, draggedElement, itemsInTarget) {
+  // const itemsInTarget = targetStack.querySelectorAll(".item-piece");
   const maxItems = 4;
 
   if (itemsInTarget.length >= maxItems) {
@@ -115,7 +129,7 @@ function isValidMove(targetStack, draggedElement) {
       return true;
   }
 
-  // Kontrollera om namn matchar
+  // Kontrollera om namn matchar det första objektet i stacken
   const firstItemName = itemsInTarget[0].dataset.name;
   if (firstItemName === draggedElement.dataset.name) {
       return true;
@@ -123,6 +137,17 @@ function isValidMove(targetStack, draggedElement) {
       console.warn("Fel färg för denna stack.");
       return false;
   }
+}
+
+// Uppdatera draggable-attributen
+function updateDraggableStates() {
+  const stacks = document.querySelectorAll(".stack");
+  stacks.forEach(stack => {
+      const items = stack.querySelectorAll(".item-piece");
+      items.forEach((item, index) => {
+          item.draggable = index === 0; // Endast första objektet är draggable
+      });
+  });
 }
 
 // // Återställ stilar och variabler efter drag
