@@ -66,120 +66,62 @@ function generateShuffledStacks(items) {
   return stacks;
 }
 
-//*__________________________Click and place functions ___________________________________________
 
-let selectedItem; // Spårar vilket objekt som är valt
+//*_______________Move on click__________________
 
+let selectedItem;
 
-function addClickHandlers() {
+// Lägg till onclick-funktion för att flytta föremål mellan staplar
+function enableItemMovement() {
   const stacks = document.querySelectorAll(".stack");
 
   stacks.forEach(stack => {
-    stack.addEventListener("click", () => {
-        console.log(`Clicked on stack: ${stack.id}`); // Debug-logg
-        placeItem(stack.id);
-    });
-});
-  // Ta bort eventlyssnare innan vi lägger till nya för att undvika duplicering
-  stacks.forEach(stack => {
-      const firstChild = stack.firstElementChild;
+    stack.addEventListener("click", function () {
+      if (!selectedItem) {
+        // Välj det första föremålet i stacken
+        selectedItem = stack.querySelector(".item-piece");
 
-       // Lägg till eventlyssnare på första barnet
-       if (firstChild) {
-        const itemId = firstChild.id;
-        const stackId = stack.id;
-        firstChild.addEventListener("click", () => selectItem(itemId, stackId));
+        if (selectedItem) {
+          selectedItem.classList.add("selected"); // Lägg till visuellt stöd
+        } else {
+          console.log("Ingen föremål att välja.");
+        }
+      } else {
+         // Förhindra att föremålet flyttas till samma stack det redan är i
+         if (stack.contains(selectedItem)) {
+          console.log("Föremålet är redan i denna stack.");
+          selectedItem.classList.remove("selected");
+          selectedItem = null; // Avmarkera föremålet
+          return;
+        }
+
+        // Kontrollera om föremålet kan flyttas till denna stack
+        const stackItems = stack.querySelectorAll(".item-piece");
+        const isStackEmpty = stackItems.length === 0;
+        const hasMatchingItem = Array.from(stackItems).some(item => 
+          item.alt === selectedItem.alt // Jämför 'name' genom 'alt'-attributet
+        );
+
+        if ((isStackEmpty || hasMatchingItem) && stackItems.length < 4) {
+          stack.appendChild(selectedItem);
+          selectedItem.classList.remove("selected");
+          selectedItem = null; // Avmarkera föremålet
+        } else {
+          console.log("Kan inte flytta föremålet till denna stack.");
+          // Avmarkera föremålet vid ogiltig handling
+          selectedItem.classList.remove("selected");
+          selectedItem = null;
+        }
       }
-      // Lägg till eventlyssnare för stacken själv
-      stack.addEventListener("click", () => placeItem(stack.id));
+    });
   });
-
-  // // Lägg till eventlyssnare på första barnet i varje stack
-  // stacks.forEach(stack => {
-  //     const firstChild = stack.firstElementChild;
-  //     if (firstChild) {
-  //         firstChild.addEventListener("click", () => selectItem(firstChild));
-  //     }
-  // });
-
-  // // Lägg till eventlyssnare på tomma platser för att kunna placera objekt
-  // stacks.forEach(stack => {
-  //     stack.addEventListener("click", () => placeItem(stack));
-  // });
-
-  // // Klicka utanför stackar för att avmarkera
-  // document.addEventListener("click", event => {
-  //     if (!event.target.classList.contains("item-piece") && !event.target.classList.contains("stack")) {
-  //         deselectItem();
-  //     }
-  // });
 }
 
-
-function selectItem(itemId, stackId) {
-  
-    if (selectedItem) {
-        deselectItem(); // Avmarkera tidigare objekt om ett redan är valt
-    }
-
-     // Hämta objektet och markera det som valt
-     const item = document.getElementById(itemId);
-     selectedItem = { id: itemId, element: item, stackId };
-     item.classList.add("selected");
-
-    // selectedItem = item; // Markera nytt objekt som valt
-    // item.classList.add("selected"); // Lägg till visuell indikation
-}
-
-function deselectItem() {
-    if (selectedItem) {
-        selectedItem.classList.remove("selected");
-        selectedItem = null;
-    }
-}
-
-function placeItem(targetStackId) {
-    if (!selectedItem) return; // Om inget objekt är valt, gör inget
-
-    const targetStack = document.getElementById(targetStackId);
-
-    if (isValidMove(targetStackId)) {
-      const itemElement = document.getElementById(selectedItem.id);
-      targetStack.appendChild(itemElement);
-      deselectItem();
-      addClickHandlers(); // Uppdatera eventlyssnare
-  } else {
-      console.error("Ogiltigt drag!");
-  }
-}
-
-function isValidMove(targetStackId) {
-  const targetStack = document.getElementById(targetStackId);
-  const itemsInTarget = targetStack.querySelectorAll(".item-piece");
-
-  if (itemsInTarget.length >= 4) {
-      return false; // Stacken är full
-  }
-
-  if (itemsInTarget.length === 0) {
-      return true; // Stacken är tom
-  }
-
-  const topItem = itemsInTarget[itemsInTarget.length - 1];
-  return topItem.alt === selectedItem.element.alt; // Kontrollera om färger matchar
-}
-
-
-function addToStack(target, item) {
-    // Lägg objektet i stacken
-    target.appendChild(item);
-
-    // Uppdatera positionen för alla objekt i stacken
-    const itemsInTarget = target.querySelectorAll(".item-piece");
-}
 
 
 document.addEventListener("DOMContentLoaded", () => {
-  renderGame().then(addClickHandlers);
+  renderGame().then(() => {
+    enableItemMovement();
+  });
 });
 // renderGame().then(addClickHandlers);

@@ -95,9 +95,20 @@ function startDrag(event) {
     event.preventDefault();
     draggedItem = event.target;
     originalParent = draggedItem.parentElement;
-    draggedItem.style.position = "absolute";
-    draggedItem.style.zIndex = 1000;
+    // draggedItem.style.position = "absolute";
+    // draggedItem.style.zIndex = 1000;
+
+    // Hämta startposition
+    const rect = draggedItem.getBoundingClientRect();
+
+     // Ställ in initial position
+     draggedItem.style.position = "absolute";
+     draggedItem.style.left = `${rect.left}px`;
+     draggedItem.style.top = `${rect.top}px`;
+     draggedItem.style.zIndex = 1000;
 }
+
+    
 
 //* Flytta objektet med musen/pekaren
 function moveItem(event) {
@@ -106,8 +117,20 @@ function moveItem(event) {
     const x = event.clientX || event.touches[0].clientX;
     const y = event.clientY || event.touches[0].clientY;
 
-    draggedItem.style.left = `${x - draggedItem.offsetWidth / 2}px`;
-    draggedItem.style.top = `${y - draggedItem.offsetHeight / 2}px`; 
+    const containerRect = document.getElementById("game-container").getBoundingClientRect();
+
+     // Begränsa rörelse inom containern
+     const boundedX = Math.max(
+      containerRect.left,
+      Math.min(containerRect.right - draggedItem.offsetWidth, x)
+  );
+  const boundedY = Math.max(
+      containerRect.top,
+      Math.min(containerRect.bottom - draggedItem.offsetHeight, y)
+  );
+
+  draggedItem.style.left = `${boundedX - draggedItem.offsetWidth / 2}px`;
+  draggedItem.style.top = `${boundedY - draggedItem.offsetHeight / 2}px`;
 }
 
 //* Släpp objektet
@@ -121,7 +144,7 @@ function dropItem(event) {
     );
 
      // Kontrollera om det är en giltig plats
-     if (dropTarget && (dropTarget.classList.contains("stack") || dropTarget.classList.contains("empty-slot"))) {
+     if (dropTarget && (dropTarget.classList.contains("stack"))) {
         if (isValidMove(dropTarget)) {
             // Lägg till objektet i stapeln korrekt
             addToStack(dropTarget, draggedItem);
