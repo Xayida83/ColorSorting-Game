@@ -67,7 +67,7 @@ function generateShuffledStacks(items) {
 }
 
 
-//*_______________Move on click__________________
+//*_______________Move on click_______Working no win yet
 
 let selectedItem;
 

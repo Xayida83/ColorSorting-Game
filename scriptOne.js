@@ -17,26 +17,32 @@ async function renderGame() {
       const stacks = generateShuffledStacks(selectedItems);
 
       // Rendera staplar
-      stacks.forEach(stack => {
+      stacks.forEach((stack, stackIndex) => {
           const stackDiv = document.createElement("div");
           stackDiv.className = "stack";
+          stackDiv.dataset.stackId = stackIndex; // Identifiera stacken
 
-          stack.forEach(item => {
+          stack.forEach((item, index) => {
               const itemImg = document.createElement("img");
               itemImg.src = item.image;
               itemImg.alt = item.name;
               itemImg.classList.add("item-piece", `color-${item.name}`);
+              itemImg.draggable = true; // Gör elementet draggable
+              itemImg.dataset.name = item.name; // Lägg till namn för validering
+              itemImg.dataset.index = index; // Spara index i stacken
+              addDragEvents(itemImg); // Lägg till drag-event-hanterare
               stackDiv.appendChild(itemImg);
           });
 
           gameContainer.appendChild(stackDiv);
-          
       });
 
       // Lägg till tomma platser
       for (let i = 0; i < 2; i++) {
           const emptySlot = document.createElement("div");
           emptySlot.className = "stack";
+          emptySlot.dataset.stackId = stacks.length + i; // Identifiera stacken
+          addDropEvents(emptySlot); // Lägg till drop-event-hanterare
           gameContainer.appendChild(emptySlot);
       }
   } catch (error) {
@@ -64,155 +70,70 @@ function generateShuffledStacks(items) {
   return stacks;
 }
 
-//*________________Drag___________
-let draggedItem = null; // Element som dras
-let originalParent = null; // Ursprungsstapel
-
-function addDragAndDrop() {
-    const items = document.querySelectorAll(".item-piece");
-    const slots = document.querySelectorAll("stack, .empty-slot");
-
-    //Starta dragning 
-    items.forEach(item => {
-        item.addEventListener("mousedown", startDrag);
-        item.addEventListener("touchstart", startDrag);
-    });
-
-    //Släpp objekt
-    slots.forEach(slot => {
-        slot.addEventListener("mouseup", dropItem);
-        slot.addEventListener("touchend", dropItem);
-    });
-
-    //Flytta objekt
-    document.addEventListener("mousemove", moveItem);
-    document.addEventListener("touchmove", moveItem);
-
+// Lägg till event-hanterare för drag
+function addDragEvents(item) {
+  item.addEventListener("dragstart", (e) => {
+      e.dataTransfer.setData("text/plain", JSON.stringify({
+          name: item.dataset.name,
+          index: item.dataset.index,
+          stackId: item.parentNode.dataset.stackId
+      }));
+  });
 }
 
-//* Starta dragning
-function startDrag(event) {
-    event.preventDefault();
-    draggedItem = event.target;
-    originalParent = draggedItem.parentElement;
-    // draggedItem.style.position = "absolute";
-    // draggedItem.style.zIndex = 1000;
+// Lägg till event-hanterare för drop
+function addDropEvents(stack) {
+  stack.addEventListener("dragover", (e) => {
+      e.preventDefault(); // Möjliggör drop
+  });
 
-    // Hämta startposition
-    const rect = draggedItem.getBoundingClientRect();
+  stack.addEventListener("drop", (e) => {
+      e.preventDefault();
 
-     // Ställ in initial position
-     draggedItem.style.position = "absolute";
-     draggedItem.style.left = `${rect.left}px`;
-     draggedItem.style.top = `${rect.top}px`;
-     draggedItem.style.zIndex = 1000;
+      const data = JSON.parse(e.dataTransfer.getData("text/plain"));
+      const draggedElement = document.querySelector(`.stack[data-stack-id='${data.stackId}'] .item-piece[data-index='${data.index}']`);
+
+      // Validera regler
+      if (draggedElement && isValidMove(stack, draggedElement)) {
+          stack.appendChild(draggedElement); // Flytta elementet
+      }
+  });
 }
 
-    
+// Validera regler
+function isValidMove(targetStack, draggedElement) {
+  const itemsInTarget = targetStack.querySelectorAll(".item-piece");
+  const maxItems = 4;
 
-//* Flytta objektet med musen/pekaren
-function moveItem(event) {
-    if (!draggedItem) return; 
+  if (itemsInTarget.length >= maxItems) {
+      console.warn("Stacken är full.");
+      return false;
+  }
 
-    const x = event.clientX || event.touches[0].clientX;
-    const y = event.clientY || event.touches[0].clientY;
+  if (itemsInTarget.length === 0) {
+      // Tom stack: alltid tillåtet
+      return true;
+  }
 
-    const containerRect = document.getElementById("game-container").getBoundingClientRect();
-
-     // Begränsa rörelse inom containern
-     const boundedX = Math.max(
-      containerRect.left,
-      Math.min(containerRect.right - draggedItem.offsetWidth, x)
-  );
-  const boundedY = Math.max(
-      containerRect.top,
-      Math.min(containerRect.bottom - draggedItem.offsetHeight, y)
-  );
-
-  draggedItem.style.left = `${boundedX - draggedItem.offsetWidth / 2}px`;
-  draggedItem.style.top = `${boundedY - draggedItem.offsetHeight / 2}px`;
+  // Kontrollera om namn matchar
+  const firstItemName = itemsInTarget[0].dataset.name;
+  if (firstItemName === draggedElement.dataset.name) {
+      return true;
+  } else {
+      console.warn("Fel färg för denna stack.");
+      return false;
+  }
 }
 
-//* Släpp objektet
-function dropItem(event) {
-    if(!draggedItem) return;
+// // Återställ stilar och variabler efter drag
+// function resetDraggedItem() {
+//     draggedItem.style.position = "";
+//     draggedItem.style.zIndex = "";
+//     draggedItem.style.left = "";
+//     draggedItem.style.top = "";
 
-    // Hitta element vid droppositionen
-    const dropTarget = document.elementFromPoint(
-        event.clientX || event.changedTouches[0].clientX,
-        event.clientY || event.changedTouches[0].clientY
-    );
+//     draggedItem = null; // Släpp objektet
+//     originalParent = null; // Återställ ursprung
+// }
 
-     // Kontrollera om det är en giltig plats
-     if (dropTarget && (dropTarget.classList.contains("stack"))) {
-        if (isValidMove(dropTarget)) {
-            // Lägg till objektet i stapeln korrekt
-            addToStack(dropTarget, draggedItem);
-        } else {
-            console.error("Ogiltigt drag!");
-            originalParent.appendChild(draggedItem); // Återställ om ogiltigt drag
-        }
-    } else {
-        // Återställ om det inte är en giltig plats
-        originalParent.appendChild(draggedItem);
-    }
-
-   // Återställ stilar
-   resetDraggedItem();
-}
-
-// Lägg till objektet i stapeln korrekt
-function addToStack(target, item) {
-    // Lägg objektet i stapeln
-    target.appendChild(item);
-
-    // Om platsen är en tom slot, byt klass till stack
-    if (target.classList.contains("empty-slot")) {
-        target.classList.remove("empty-slot");
-        target.classList.add("stack");
-    }
-
-    // Justera visuellt genom att placera objektet korrekt i layouten
-    const itemsInTarget = target.querySelectorAll(".item-piece");
-    itemsInTarget.forEach((el, index) => {
-        el.className = `item-piece stacked position-${index}`; 
-    });
-}
-
-// Kontrollera om flytten är giltig
-function isValidMove(target) {
-    const itemsInTarget = target.querySelectorAll(".item-piece");
-
-     // Max fyra objekt per stapel
-     if (itemsInTarget.length >= 4) {
-        return false; // Ogiltigt: Stapeln är full
-    }
-
-    // Om platsen är tom (empty-slot) eller stapeln är tom
-    if (target.classList.contains("empty-slot") && itemsInTarget.length === 0) {
-        return true; // Giltigt: Tom plats
-    }
-
-     // Om det är en stapel och översta objektet har samma name som det som dras
-    if (
-        target.classList.contains("stack") &&
-        itemsInTarget.length > 0 &&
-        itemsInTarget[itemsInTarget.length - 1].alt === draggedItem.alt
-    ) {
-        return true; // Giltigt: Samma färg
-    }
-    return false; // Ogiltigt: Annars
-}
-
-// Återställ stilar och variabler efter drag
-function resetDraggedItem() {
-    draggedItem.style.position = "";
-    draggedItem.style.zIndex = "";
-    draggedItem.style.left = "";
-    draggedItem.style.top = "";
-
-    draggedItem = null; // Släpp objektet
-    originalParent = null; // Återställ ursprung
-}
-
-renderGame().then(addDragAndDrop);
+renderGame().then(addDragEvents());
