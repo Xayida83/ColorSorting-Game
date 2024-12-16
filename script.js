@@ -25,7 +25,7 @@ async function renderGame() {
               const itemImg = document.createElement("img");
               itemImg.src = item.image;
               itemImg.alt = item.name;
-              itemImg.className = "item-piece";
+              itemImg.classList.add("item-piece", `color-${item.name}`);
               stackDiv.appendChild(itemImg);
           });
 
