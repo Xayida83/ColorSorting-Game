@@ -30,6 +30,15 @@
   cursor: grab;
   object-fit: contain;
 }
+.color-Red { background-color: red; }
+.color-Blue { background-color: blue; }
+.color-Green { background-color: green; }
+.color-Yellow { background-color: yellow; }
+.color-Black { background-color: rgb(3, 3, 3); }
+.color-Purple { background-color: rgb(214, 7, 246); }
+.color-Pink { background-color: rgb(242, 30, 171); }
+
+
 
 .selected {
   outline: 2px solid #007bff;
