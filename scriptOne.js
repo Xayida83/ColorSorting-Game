@@ -6,17 +6,14 @@ async function renderGame() {
 
    // Kontrollera om vi är på en touch-enhet
    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-   console.log(isTouchDevice);
 
   try {
       // Hämta JSON-data
       const response = await fetch("items.json");
       const items = await response.json();
-      console.log("all items: ", items);
 
       // Limit to selected number of colors
       const selectedItems = items.slice(0, numberOfItems);
-      console.log("Valda items:", selectedItems);
 
       // Skapa dynamiska staplar
       const stacks = generateShuffledStacks(selectedItems);
@@ -180,7 +177,6 @@ function addDropEvents(stack) {
     e.preventDefault();
 
     const data = JSON.parse(e.dataTransfer.getData("text/plain"));
-    console.log("Dropped data:", data);
     const draggedElement = document.querySelector(
       `.stack[data-stack-id='${data.stackId}'] .item-piece[data-index='${data.index}']`
     );
