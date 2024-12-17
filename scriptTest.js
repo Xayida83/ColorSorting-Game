@@ -67,7 +67,7 @@ function generateShuffledStacks(items) {
 }
 
 
-//*_______________Move on click_______Working no win yet
+//*_______________Move on click_______
 
 let selectedItem;
 
@@ -103,7 +103,12 @@ function enableItemMovement() {
         );
 
         if ((isStackEmpty || hasMatchingItem) && stackItems.length < 4) {
-          stack.appendChild(selectedItem);
+          if (stack.firstChild) {
+            stack.insertBefore(selectedItem, stack.firstChild); // Lägg överst
+          } else {
+            stack.appendChild(selectedItem); // Om stacken är tom, lägg till normalt
+          }
+          
           selectedItem.classList.remove("selected");
           selectedItem = null; // Avmarkera föremålet
         } else {
