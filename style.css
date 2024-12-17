@@ -19,7 +19,6 @@
   position: relative;
 }
 
-
 .item-piece {
   transition: transform 0.2s ease;
   width: 45px;
@@ -38,23 +37,23 @@
 .color-Purple { background-color: rgb(214, 7, 246); }
 .color-Pink { background-color: rgb(242, 30, 171); }
 
-
-
-.selected {
-  outline: 2px solid #007bff;
-  transform: scale(1.1); 
-  transition: transform 0.2s ease;
+.item-piece.dragging {
+  opacity: 0.5;
+  border: 2px dashed #007bff;
+  transform: scale(1.1);
+  pointer-events: none; /* Förhindrar att elementet fångar onödiga händelser */
 }
 
-.stacked {
+
+/* .stacked {
   position: absolute;
-}
+} */
 
 /* CSS för max 4 objekt */
-.position-0 { bottom: 0; }
-.position-1 { bottom: 35px; }
-.position-2 { bottom: 70px; }
-.position-3 { bottom: 105px; }
+/* .position-0 { bottom: 0; } */
+/* .position-1 { bottom: 35px; } */
+/* .position-2 { bottom: 70px; } */
+/* .position-3 { bottom: 105px; } */
 
 
 /* .empty-slot {
