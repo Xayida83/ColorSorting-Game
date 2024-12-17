@@ -1,7 +1,7 @@
 // Ladda JSON-data och rendera spelet
 async function renderGame() {
   const gameContainer = document.getElementById("game-container");
-  const numberOfItems = 3; // Adjust this to select number of colors
+  const numberOfItems = 4; // Adjust this to select number of colors
 
   try {
       // Hämta JSON-data
@@ -94,25 +94,33 @@ function addDragEvents(item) {
 // Lägg till event-hanterare för drop
 function addDropEvents(stack) {
   stack.addEventListener("dragover", (e) => {
-      e.preventDefault(); // Möjliggör drop
+    e.preventDefault(); // Möjliggör drop
   });
 
   stack.addEventListener("drop", (e) => {
-      e.preventDefault();
+    e.preventDefault();
 
-      const data = JSON.parse(e.dataTransfer.getData("text/plain"));
-      const draggedElement = document.querySelector(`.stack[data-stack-id='${data.stackId}'] .item-piece[data-index='${data.index}']`);
-      const itemsInTarget = stack.querySelectorAll(".item-piece");
+    const data = JSON.parse(e.dataTransfer.getData("text/plain"));
+    const draggedElement = document.querySelector(
+      `.stack[data-stack-id='${data.stackId}'] .item-piece[data-index='${data.index}']`
+    );
+    const itemsInTarget = stack.querySelectorAll(".item-piece");
 
-      // Validera regler
-      if (draggedElement && isValidMove(stack, draggedElement, itemsInTarget)) {
-          stack.appendChild(draggedElement); // Flytta elementet
-
-          // Uppdatera draggable-attributen
-          updateDraggableStates();
+    // Validera regler
+    if (draggedElement && isValidMove(stack, draggedElement, itemsInTarget)) {
+      // Flytta det dragna elementet till toppen av stacken
+      if (itemsInTarget.length > 0) {
+        stack.insertBefore(draggedElement, itemsInTarget[0]); // Sätt överst
+      } else {
+        stack.appendChild(draggedElement); // Om stacken är tom
       }
+
+      // Uppdatera draggable-attributen
+      updateDraggableStates();
+    }
   });
 }
+
 
 // Validera regler
 function isValidMove(targetStack, draggedElement, itemsInTarget) {
