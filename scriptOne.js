@@ -104,33 +104,41 @@ function addDragEvents(item) {
 
 // Lägg till touch-events för mobiler
 function addTouchEvents(item) {
+  let initialX = 0, initialY = 0;
+
   item.addEventListener("touchstart", (e) => {
     const parentStack = item.parentNode;
     const firstChild = parentStack.querySelector(".item-piece");
 
     if (item === firstChild) {
       currentDraggedElement = item;
-      item.classList.add("dragging"); // Lägg till styling
-      e.preventDefault(); // Förhindra scroll
+      item.classList.add("dragging");
+
+      // Spara startpositionen
+      const touch = e.touches[0];
+      initialX = touch.clientX;
+      initialY = touch.clientY;
+
+      e.preventDefault();
     }
   });
 
   item.addEventListener("touchmove", (e) => {
     if (!currentDraggedElement) return;
-    currentDraggedElement.classList.add("dragging");
 
     const touch = e.touches[0];
-    currentDraggedElement.style.position = "absolute";
-    currentDraggedElement.style.zIndex = "2000"; // Flytta objektet över andra element
-    currentDraggedElement.style.left = `${touch.clientX - 2}px`;
-    currentDraggedElement.style.top = `${touch.clientY - 2}px`;
+    const deltaX = touch.clientX - initialX;
+    const deltaY = touch.clientY - initialY;
+
+    // Använd transform för att flytta elementet
+    currentDraggedElement.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+
     e.preventDefault();
   });
 
   item.addEventListener("touchend", (e) => {
     if (!currentDraggedElement) return;
 
-    // Hitta den stack som användaren släppte objektet över
     const touch = e.changedTouches[0];
     const targetStack = document.elementFromPoint(touch.clientX, touch.clientY);
 
@@ -142,17 +150,15 @@ function addTouchEvents(item) {
       }
     }
 
-    // Återställ objektets stil
+    // Återställ stil och position
     currentDraggedElement.classList.remove("dragging");
-    currentDraggedElement.style.position = "";
-    currentDraggedElement.style.left = "";
-    currentDraggedElement.style.top = "";
-    currentDraggedElement.style.zIndex = "";
+    currentDraggedElement.style.transform = "";
     currentDraggedElement = null;
 
     e.preventDefault();
   });
 }
+
 
 // Lägg till event-hanterare för drop
 function addDropEvents(stack) {

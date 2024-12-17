@@ -15,12 +15,11 @@
   justify-content: flex-end;
   align-items: center;
   background-color: #f9f9f9;
-  overflow: hidden;
   position: relative;
 }
 
 .item-piece {
-  transition: transform 0.2s ease;
+  transition: transform ease, opacity ease;
   width: 45px;
   height: 45px;
   margin: 2px 0;
@@ -42,6 +41,7 @@
   border: 2px dashed #007bff;
   transform: scale(1.1);
   pointer-events: none; /* Förhindrar att elementet fångar onödiga händelser */
+  z-index: 1000;
 }
 
 
