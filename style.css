@@ -40,8 +40,8 @@
   opacity: 0.5;
   border: 2px dashed #007bff;
   transform: scale(1.1);
-  pointer-events: none; /* Förhindrar att elementet fångar onödiga händelser */
-  z-index: 1000;
+  /* pointer-events: none; Förhindrar att elementet fångar onödiga händelser */
+  z-index: 10;
 }
 
 

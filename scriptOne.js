@@ -4,6 +4,10 @@ const numberOfItems = 3;// Adjust this to select number of colors
 async function renderGame() {
   const gameContainer = document.getElementById("game-container");
 
+   // Kontrollera om vi är på en touch-enhet
+   const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+   console.log(isTouchDevice);
+
   try {
       // Hämta JSON-data
       const response = await fetch("items.json");
@@ -33,8 +37,12 @@ async function renderGame() {
               itemImg.dataset.index = index; // Spara index i stacken
               stackDiv.appendChild(itemImg);
 
-              addDragEvents(itemImg); // Lägg till drag-event-hanterare
-              addTouchEvents(itemImg); // Lägg till touch events
+            // Lägg till händelser baserat på enhet
+            if (isTouchDevice) {
+              addTouchEvents(itemImg);
+            } else {
+              addDragEvents(itemImg);
+            }
           });
 
           gameContainer.appendChild(stackDiv);
@@ -139,6 +147,9 @@ function addTouchEvents(item) {
   item.addEventListener("touchend", (e) => {
     if (!currentDraggedElement) return;
 
+    // Återställ tillfälligt transform för att få korrekt element
+    currentDraggedElement.style.transform = "";
+
     const touch = e.changedTouches[0];
     const targetStack = document.elementFromPoint(touch.clientX, touch.clientY);
 
@@ -160,63 +171,16 @@ function addTouchEvents(item) {
 }
 
 
-// Lägg till event-hanterare för drop
 function addDropEvents(stack) {
   stack.addEventListener("dragover", (e) => {
     e.preventDefault(); // Möjliggör drop
   });
-// Lägg till drop-events för desktop
-function addDropEvents(stack) {
-  stack.addEventListener("dragover", (e) => e.preventDefault());
-  stack.addEventListener("drop", (e) => {
-    e.preventDefault();
-
-    const data = JSON.parse(e.dataTransfer.getData("text/plain"));
-    const draggedElement = document.querySelector(
-      `.stack[data-stack-id='${data.stackId}'] .item-piece[data-index='${data.index}']`
-    );
-    const itemsInTarget = stack.querySelectorAll(".item-piece");
-
-    if (draggedElement && isValidMove(stack, draggedElement, itemsInTarget)) {
-      stack.insertBefore(draggedElement, stack.firstChild);
-      updateDraggableStates();
-    }
-  });
-}
-
-// Validera regler
-function isValidMove(targetStack, draggedElement, itemsInTarget) {
-  const maxItems = 4;
-
-  if (itemsInTarget.length >= maxItems) {
-    console.warn("Stacken är full.");
-    return false;
-  }
-
-  if (itemsInTarget.length === 0) return true;
-
-  const firstItemName = itemsInTarget[0].dataset.name;
-  if (firstItemName === draggedElement.dataset.name) return true;
-
-  console.warn("Fel färg för denna stack.");
-  return false;
-}
-
-// Uppdatera draggable-attributen
-function updateDraggableStates() {
-  const stacks = document.querySelectorAll(".stack");
-  stacks.forEach((stack) => {
-    const items = stack.querySelectorAll(".item-piece");
-    items.forEach((item, index) => {
-      item.draggable = index === 0;
-    });
-  });
-}
 
   stack.addEventListener("drop", (e) => {
     e.preventDefault();
 
     const data = JSON.parse(e.dataTransfer.getData("text/plain"));
+    console.log("Dropped data:", data);
     const draggedElement = document.querySelector(
       `.stack[data-stack-id='${data.stackId}'] .item-piece[data-index='${data.index}']`
     );
