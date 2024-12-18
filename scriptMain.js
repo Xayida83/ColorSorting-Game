@@ -1,5 +1,5 @@
 let currentDraggedElement;
-const numberOfItems = 7;// Adjust this to select number of colors
+const numberOfItems = 4;// Adjust this to select number of colors
 
 async function renderGame() {
   const gameContainer = document.getElementById("game-container");
@@ -344,7 +344,9 @@ function checkWinCondition() {
   });
   //Om alla items är sorterade
   if (completedStacks === numberOfItems) {
+    setTimeout(() => {
       alert("Congratulations! You won!");
+    }, 300); // 300ms fördröjning
       // Du kan också lägga till andra åtgärder som att inaktivera vidare drag
   }
 }
@@ -372,8 +374,10 @@ function checkLoseCondition() {
   });
 
   if (!hasValidMove) {
+     // Fördröj meddelandet så att användaren ser flytten
+     setTimeout(() => {
       alert("Game Over! No more valid moves.");
-      // Lägg till extra logik om spelet ska avslutas
+    }, 300); // 300ms fördröjning
   }
 }
 
