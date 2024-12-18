@@ -1,5 +1,5 @@
 let currentDraggedElement;
-const numberOfItems = 5;// Adjust this to select number of colors
+const numberOfItems = 3;// Adjust this to select number of colors
 
 async function renderGame() {
   const gameContainer = document.getElementById("game-container");
@@ -100,9 +100,8 @@ function moveItemToStack(item, targetStack) {
     } else {
       targetStack.appendChild(item);
     }
-  } else {
-    //*Ogiltig flyttning
-  }
+  } 
+  checkWinCondition(); // Kontrollera om spelet är klart
 }
 
 
@@ -314,7 +313,7 @@ function updateDraggableStates() {
   });
 }
 
-// Funktion för att återställa spelet
+//* Funktion för att återställa spelet
 function resetGame() {
   const gameContainer = document.getElementById("game-container");
   gameContainer.innerHTML = ""; // Rensa nuvarande spel
@@ -323,6 +322,32 @@ function resetGame() {
 
 // Lägg till event-lyssnare till knappen
 document.getElementById("restart-btn").addEventListener("click", resetGame);
+
+//* Kolla om en stack är klar
+function checkWinCondition() {
+  const stacks = document.querySelectorAll(".stack");
+  let completedStacks = 0;
+
+  stacks.forEach(stack => {
+      const items = stack.querySelectorAll(".item-piece");
+
+      if (items.length === 4) {
+          // Kontrollera om alla objekt i stacken har samma namn
+          const firstItemName = items[0].dataset.name;
+          const isUniform = Array.from(items).every(item => item.dataset.name === firstItemName);
+
+          if (isUniform) {
+              completedStacks++;
+          }
+      }
+  });
+  //Om alla items är sorterade
+  if (completedStacks === numberOfItems) {
+      alert("Congratulations! You won!");
+      // Du kan också lägga till andra åtgärder som att inaktivera vidare drag
+  }
+}
+
 
 
 renderGame();
