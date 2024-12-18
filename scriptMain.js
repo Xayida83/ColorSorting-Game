@@ -376,6 +376,15 @@ function updateGameStatus() {
   }
 }
 
+// Funktion för att återställa spelet
+function resetGame() {
+  const gameContainer = document.getElementById("game-container");
+  gameContainer.innerHTML = ""; // Rensa nuvarande spel
+  renderGame(); // Rendera ett nytt spel
+}
+
+// Lägg till event-lyssnare till knappen
+document.getElementById("restart-btn").addEventListener("click", resetGame);
 
 
 
