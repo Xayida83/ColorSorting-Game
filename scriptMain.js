@@ -1,5 +1,5 @@
 let currentDraggedElement;
-const numberOfItems = 5;// Adjust this to select number of colors
+const numberOfItems = 7;// Adjust this to select number of colors
 
 async function renderGame() {
   const gameContainer = document.getElementById("game-container");
@@ -100,6 +100,9 @@ function moveItemToStack(item, targetStack) {
     } else {
       targetStack.appendChild(item);
     }
+
+    // Kontrollera spelets status efter flytten
+    updateGameStatus();
   } else {
     console.warn("Ogiltig flyttning.");
   }
@@ -187,7 +190,7 @@ function addDragEvents(item) {
   });
 }
 
-//Lägg till touch-events för mobiler
+//*Lägg till touch-events för mobiler
 function addTouchEvents(item) {
   let initialX = 0, initialY = 0;
 
@@ -247,7 +250,7 @@ function addTouchEvents(item) {
   });
 }
 
-
+//*När man släpper item över stack
 function addDropEvents(stack) {
   stack.addEventListener("dragover", (e) => {
     e.preventDefault(); // Möjliggör drop
@@ -273,12 +276,14 @@ function addDropEvents(stack) {
 
       // Uppdatera draggable-attributen
       updateDraggableStates();
+      // Kontrollera spelets status efter draget
+      updateGameStatus();
     }
   });
 }
 
 
-// Validera regler
+//* Kollar om ett drag är giltigt eller ej
 function isValidMove(targetStack, draggedElement, itemsInTarget) {
   // const itemsInTarget = targetStack.querySelectorAll(".item-piece");
   const maxItems = 4;
@@ -303,7 +308,7 @@ function isValidMove(targetStack, draggedElement, itemsInTarget) {
   }
 }
 
-// Uppdatera draggable-attributen
+//* Uppdatera draggable-attributen
 function updateDraggableStates() {
   const stacks = document.querySelectorAll(".stack");
   stacks.forEach(stack => {
@@ -313,6 +318,65 @@ function updateDraggableStates() {
       });
   });
 }
+
+function checkWinCondition() {
+  const stacks = document.querySelectorAll('.stack');
+  let isGameWon = true;
+
+  stacks.forEach(stack => {
+    const items = stack.querySelectorAll('.item-piece');
+    if (items.length > 0) {
+      // Kontrollera att stacken har exakt 4 objekt och alla har samma namn
+      const firstItemName = items[0].dataset.name;
+      const isStackValid = Array.from(items).every(item => item.dataset.name === firstItemName);
+      if (items.length !== 4 || !isStackValid) {
+        isGameWon = false;
+      }
+    }
+  });
+
+  return isGameWon;
+}
+
+//* Kontrollera om man kan göra flera moves
+function checkValidMoves() {
+  const stacks = document.querySelectorAll('.stack');
+  const allItems = document.querySelectorAll('.item-piece');
+
+  for (const item of allItems) {
+    const parentStack = item.closest('.stack');
+    const itemsInParentStack = parentStack.querySelectorAll('.item-piece');
+
+    // Endast det översta objektet i sin stack kan flyttas
+    if (item !== itemsInParentStack[0]) continue;
+
+    // Kontrollera möjliga drag
+    for (const stack of stacks) {
+      if (stack !== parentStack) {
+        const itemsInTargetStack = stack.querySelectorAll('.item-piece');
+        if (isValidMove(stack, item, itemsInTargetStack)) {
+          return true; // Det finns minst ett giltigt drag
+        }
+      }
+    }
+  }
+
+  return false; // Inga giltiga drag kvar
+}
+
+//* Uppdatera status efter varje drag
+function updateGameStatus() {
+  if (checkWinCondition()) {
+    alert("Du vann!");
+    return;
+  }
+
+  if (!checkValidMoves()) {
+    alert("Inga fler drag - Du förlorade!");
+  }
+}
+
+
 
 
 renderGame();
