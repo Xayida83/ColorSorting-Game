@@ -1,5 +1,5 @@
 let currentDraggedElement;
-const numberOfItems = 3;// Adjust this to select number of colors
+const numberOfItems = 7;// Adjust this to select number of colors
 
 async function renderGame() {
   const gameContainer = document.getElementById("game-container");
@@ -102,6 +102,7 @@ function moveItemToStack(item, targetStack) {
     }
   } 
   checkWinCondition(); // Kontrollera om spelet är klart
+  checkLoseCondition(); // Kontrollera om spelaren har förlorat
 }
 
 
@@ -345,6 +346,34 @@ function checkWinCondition() {
   if (completedStacks === numberOfItems) {
       alert("Congratulations! You won!");
       // Du kan också lägga till andra åtgärder som att inaktivera vidare drag
+  }
+}
+ //* Kolla om det finns fler valid moves
+function checkLoseCondition() {
+  const stacks = document.querySelectorAll(".stack");
+  let hasValidMove = false;
+
+  // Iterera genom alla stackar och objekt för att hitta giltiga drag
+  stacks.forEach(stack => {
+      const items = stack.querySelectorAll(".item-piece");
+      if (items.length > 0) {
+          const firstItem = items[0];
+
+          // Kontrollera alla andra stackar om det är giltigt att flytta till dem
+          stacks.forEach(targetStack => {
+              if (stack !== targetStack) {
+                  const targetItems = targetStack.querySelectorAll(".item-piece");
+                  if (isValidMove(targetStack, firstItem, targetItems)) {
+                      hasValidMove = true; // Giltigt drag hittat
+                  }
+              }
+          });
+      }
+  });
+
+  if (!hasValidMove) {
+      alert("Game Over! No more valid moves.");
+      // Lägg till extra logik om spelet ska avslutas
   }
 }
 
