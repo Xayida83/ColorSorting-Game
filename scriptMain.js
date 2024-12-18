@@ -101,7 +101,7 @@ function moveItemToStack(item, targetStack) {
       targetStack.appendChild(item);
     }
   } else {
-    console.warn("Ogiltig flyttning.");
+    //*Ogiltig flyttning
   }
 }
 
@@ -284,7 +284,7 @@ function isValidMove(targetStack, draggedElement, itemsInTarget) {
   const maxItems = 4;
 
   if (itemsInTarget.length >= maxItems) {
-      console.warn("Stacken är full.");
+      //*"Stacken är full
       return false;
   }
 
@@ -298,7 +298,7 @@ function isValidMove(targetStack, draggedElement, itemsInTarget) {
   if (firstItemName === draggedElement.dataset.name) {
       return true;
   } else {
-      console.warn("Fel färg för denna stack.");
+      //*Fel färg för denna stack
       return false;
   }
 }
@@ -313,6 +313,16 @@ function updateDraggableStates() {
       });
   });
 }
+
+// Funktion för att återställa spelet
+function resetGame() {
+  const gameContainer = document.getElementById("game-container");
+  gameContainer.innerHTML = ""; // Rensa nuvarande spel
+  renderGame(); // Rendera ett nytt spel
+}
+
+// Lägg till event-lyssnare till knappen
+document.getElementById("restart-btn").addEventListener("click", resetGame);
 
 
 renderGame();
