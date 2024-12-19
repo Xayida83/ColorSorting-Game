@@ -193,105 +193,53 @@ function enableDragAndDrop() {
   
 }
 
+function handleDragStart(item, e) {
+  const parentStack = item.parentNode;
+  const firstChild = parentStack.querySelector(".item-piece");
 
+  if (item === firstChild) {
+    currentDraggedElement = item;
+    item.classList.add("dragging");
+
+    // Spara startpositionen
+    const touch = e.touches ? e.touches[0] : e;
+    initialX = touch.clientX;
+    initialY = touch.clientY;
+
+    e.preventDefault();
+  }
+}
+
+function handleDragMove(e) {
+  if (!currentDraggedElement) return;
+
+  const touch = e.touches ? e.touches[0] : e;
+  const deltaX = touch.clientX - initialX;
+  const deltaY = touch.clientY - initialY;
+
+  // Använd transform för att flytta elementet
+  currentDraggedElement.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+
+  e.preventDefault();
+}
+
+function handleDragEnd(item) {
+  item.classList.remove("dragging"); // Ta bort styling när drag avslutas
+  currentDraggedElement = null;
+}
 
 function addDragEvents(item) {
-  item.addEventListener("dragstart", (e) => {
-    const parentStack = item.parentNode;
-    const firstChild = parentStack.querySelector(".item-piece");
-    if (item === firstChild) {
-      item.classList.add("dragging");
-      e.dataTransfer.setData(
-        "text/plain",
-        JSON.stringify({
-          name: item.dataset.name,
-          index: item.dataset.index,
-          stackId: parentStack.dataset.stackId,
-        })
-      );
-      currentDraggedElement = item;
-    } else {
-      e.preventDefault();
-    }
-  });
-
-  item.addEventListener("dragend", () => {
-    item.classList.remove("dragging"); // Ta bort styling när drag avslutas
-  });
+  item.addEventListener("dragstart", (e) => handleDragStart(item, e));
+  item.addEventListener("drag", handleDragMove);
+  item.addEventListener("dragend", () => handleDragEnd(item));
 }
 
 //Lägg till touch-events för mobiler
 function addTouchEvents(item) {
-  let initialX = 0, initialY = 0;
-
-  item.addEventListener("touchstart", (e) => {
-    const parentStack = item.parentNode;
-    const firstChild = parentStack.querySelector(".item-piece");
-
-    if (item === firstChild) {
-      currentDraggedElement = item;
-      item.classList.add("dragging");
-
-      // Spara startpositionen
-      const touch = e.touches[0];
-      initialX = touch.clientX;
-      initialY = touch.clientY;
-
-      e.preventDefault();
-    }
-  });
-
-  item.addEventListener("touchmove", (e) => {
-    if (!currentDraggedElement) return;
-
-    const touch = e.touches[0];
-    const deltaX = touch.clientX - initialX;
-    const deltaY = touch.clientY - initialY;
-
-    // Använd transform för att flytta elementet
-    currentDraggedElement.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
-
-    e.preventDefault();
-  });
-
-  item.addEventListener("touchend", (e) => {
-    if (!currentDraggedElement) return;
-
-    // Återställ tillfälligt transform för att få korrekt element
-    currentDraggedElement.style.transform = "";
-
-    const touch = e.changedTouches[0];
-    const targetStack = document.elementFromPoint(touch.clientX, touch.clientY);
-
-    if (targetStack && targetStack.classList.contains("stack")) {
-      const itemsInTarget = targetStack.querySelectorAll(".item-piece");
-
-      if (isValidMove(targetStack, currentDraggedElement, itemsInTarget)) {
-        targetStack.insertBefore(currentDraggedElement, targetStack.firstChild);
-
-        // Öka moveCount och uppdatera
-        moveCount++;
-        updateMoveCount();
-
-        // Uppdatera vinstkontrollen
-        updateDraggableStates();
-        checkWinCondition();
-        checkLoseCondition();
-      }
-      else {
-        console.log("Ogiltigt drag, inget move räknas.");
-      }
-    }
-
-    // Återställ stil och position
-    currentDraggedElement.classList.remove("dragging");
-    currentDraggedElement.style.transform = "";
-    currentDraggedElement = null;
-
-    e.preventDefault();
-  });
+  item.addEventListener("touchstart", (e) => handleDragStart(item, e));
+  item.addEventListener("touchmove", handleDragMove);
+  item.addEventListener("touchend", (e) => handleDragEnd(item));
 }
-
 
 function addDropEvents(stack) {
   stack.addEventListener("dragover", (e) => {
