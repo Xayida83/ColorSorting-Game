@@ -95,6 +95,8 @@ function moveItemToStack(item, targetStack) {
 
   // Kontrollera om flytten är giltig
   if (isValidMove(targetStack, item, itemsInTarget)) {
+    const currentStack = item.parentNode;
+
     // Flytta objektet till toppen av stacken
     if (itemsInTarget.length > 0) {
       targetStack.insertBefore(item, itemsInTarget[0]);
@@ -116,24 +118,27 @@ function moveItemToStack(item, targetStack) {
 
 
 
+
 function enableClickToMove() {
   let selectedItem = null; // Håller reda på markerat objekt
 
   document.addEventListener('click', function (e) {
     const clickedStack = e.target.closest('.stack'); // Hitta stacken
     const clickedItem = e.target.closest('.item-piece'); // Hitta objektet som klickades
-  
+
     if (clickedStack) {
       if (selectedItem) {
         const itemsInTarget = clickedStack.querySelectorAll('.item-piece');
-  
-        // Kontrollera om flytten är giltig
-        if (isValidMove(clickedStack, selectedItem, itemsInTarget)) {
+
+        // Kontrollera om objektet redan är i stacken
+        if (selectedItem.parentNode === clickedStack) {
+          console.log("Objektet är redan i denna stack, inget move räknas.");
+        } else if (isValidMove(clickedStack, selectedItem, itemsInTarget)) {
           moveItemToStack(selectedItem, clickedStack);
         } else {
           console.log("Ogiltigt drag, inget move räknas.");
         }
-  
+
         selectedItem.classList.remove('selected-item'); // Ta bort markeringsklassen
         selectedItem = null; // Nollställ det markerade objektet
         updateDraggableStates(); // Uppdatera vilka objekt som är draggable
@@ -147,8 +152,8 @@ function enableClickToMove() {
       }
     }
   });
-  
 }
+
 
 
 function enableDragAndDrop() {
@@ -165,15 +170,27 @@ function enableDragAndDrop() {
     const targetStack = e.target.closest('.stack');
     const draggedItem = document.querySelector('.being-dragged');
 
+    console.log("Drop event triggered", { targetStack, draggedItem });
+  
     if (targetStack && draggedItem) {
-      moveItemToStack(draggedItem, targetStack);
+      const itemsInTarget = targetStack.querySelectorAll('.item-piece');
+  
+      // Kontrollera om flytten är giltig och anropa `moveItemToStack` endast om giltigt
+      if (isValidMove(targetStack, draggedItem, itemsInTarget)) {
+        moveItemToStack(draggedItem, targetStack);
+      } else {
+        console.log("Ogiltigt drag, inget move räknas.");
+      }
+  
       draggedItem.classList.remove('being-dragged');
     }
   });
-
+  
   document.addEventListener('dragend', function (e) {
+    // Endast visuella ändringar här, ingen logik för move-räkning
     e.target.classList.remove('being-dragged');
   });
+  
 }
 
 
@@ -284,11 +301,32 @@ function addDropEvents(stack) {
   stack.addEventListener("drop", (e) => {
     e.preventDefault();
 
-    const data = JSON.parse(e.dataTransfer.getData("text/plain"));
+    const data = e.dataTransfer.getData("text/plain");
+
+    if (!data) {
+      console.log("No data found in dataTransfer");
+      return;
+    }
+    let parsedData;
+    try {
+      parsedData = JSON.parse(data);
+    } catch (error) {
+      console.error("Failed to parse data:", error);
+      return;
+    }
+    console.log("Parsed data:", parsedData);
+    // const parsedData = JSON.parse(data);
+    // console.log("Parsed data:", parsedData);
+
     const draggedElement = document.querySelector(
       `.stack[data-stack-id='${data.stackId}'] .item-piece[data-index='${data.index}']`
     );
+    console.log("Dragged element:", draggedElement);
+
     const itemsInTarget = stack.querySelectorAll(".item-piece");
+
+    // Log items in target before validation
+    console.log("Items in target before validation:", itemsInTarget.length);
 
     // Validera regler
     if (draggedElement && isValidMove(stack, draggedElement, itemsInTarget)) {
@@ -301,7 +339,12 @@ function addDropEvents(stack) {
 
       // Uppdatera draggable-attributen
       updateDraggableStates();
+      // Log items in target after move
+      console.log("Items in target after move:", stack.querySelectorAll(".item-piece").length);
+    } else {
+      console.log("Ogiltigt drag, räknas ej");
     }
+    
   });
 }
 
@@ -317,7 +360,7 @@ function isValidMove(targetStack, draggedElement, itemsInTarget) {
   }
 
   if (itemsInTarget.length === 0) {
-      // Tom stack: alltid tillåtet
+      //* Tom stack: alltid tillåtet
       return true;
   }
 
