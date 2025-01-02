@@ -86,7 +86,7 @@ function generateShuffledStacks(items) {
 }
 
 //*'___________Move objekt to stack___________'
-
+//TODO ta bort styling när drag avslutas i moveItemToStack
 function moveItemToStack(item, targetStack) {
   if (!item || !targetStack) return;
 
