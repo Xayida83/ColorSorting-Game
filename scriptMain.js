@@ -297,6 +297,7 @@ function addTouchEvents(item) {
   });
 }
 
+
 //**__________Reset Game__________ */
 function resetGame() {
   const gameContainer = document.getElementById("game-container");
@@ -329,6 +330,8 @@ function checkWinCondition() {
               countedStacks.add(stackId); // Lägg till stapelns ID i setet
               completedStacks++; // Öka antalet färdiga staplar
               updatePoints(); // Uppdatera poängen
+
+              lockStack(stack); // Lås stapeln
           }
       }
   });
@@ -340,6 +343,18 @@ function checkWinCondition() {
     }, 300);
     // TODO: Lägg till andra åtgärder som att inaktivera vidare drag
   }
+}
+
+//**__________Lock Stack__________ */
+function lockStack(stack) {
+  stack.classList.add("locked"); // Lägg till en klass för styling som indikerar låst tillstånd
+  const items = stack.querySelectorAll(".item-piece");
+
+  items.forEach(item => {
+    item.draggable = false; // Gör objekt i stapeln ej flyttbara
+  });
+
+  stack.addEventListener("dragover", (e) => e.preventDefault()); // Förhindra dropp
 }
 
 

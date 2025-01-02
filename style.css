@@ -49,6 +49,11 @@
   box-shadow: 0 0 10px rgba(255, 255, 0, 0.7);
 }
 
+.stack.locked {
+  opacity: 0.5; /* Gör stapeln halvgenomskinlig */
+  pointer-events: none; /* Inaktivera pekarhändelser */
+}
+
 
 /* .stacked {
   position: absolute;
