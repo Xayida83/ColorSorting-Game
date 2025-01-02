@@ -1,6 +1,9 @@
 let currentDraggedElement;
 let moveCount = 0;
 const numberOfItems = 4 ;// Adjust this to select number of colors
+let completedStacks = 0;
+let countedStacks = new Set();
+let points = 200;
 
 async function renderGame() {
   const gameContainer = document.getElementById("game-container");
@@ -106,6 +109,7 @@ function moveItemToStack(item, targetStack) {
     // Öka drag-räknaren och uppdatera status
     moveCount++;
     updateMoveCount();
+    updatePoints();
 
     updateDraggableStates(); // Uppdatera draggable-attributen  
 
@@ -298,7 +302,11 @@ function resetGame() {
   const gameContainer = document.getElementById("game-container");
   gameContainer.innerHTML = ""; 
   moveCount = 0; 
-  updateMoveCount(); 
+  completedStacks = 0; 
+  points = 200;
+  countedStacks.clear();
+  updateMoveCount();
+  updatePoints();
   renderGame(); 
 }
 
@@ -307,29 +315,33 @@ document.getElementById("restart-btn").addEventListener("click", resetGame);
 //**__________Check Win Condition__________ */
 function checkWinCondition() {
   const stacks = document.querySelectorAll(".stack");
-  let completedStacks = 0;
 
   stacks.forEach(stack => {
       const items = stack.querySelectorAll(".item-piece");
+      const stackId = stack.dataset.stackId; // Hämtar stackens unika ID
 
       if (items.length === 4) {
-          // Check if all objects in the stack have the same name
+          // Kontrollera om alla objekt i stapeln har samma namn
           const firstItemName = items[0].dataset.name;
           const isUniform = Array.from(items).every(item => item.dataset.name === firstItemName);
 
-          if (isUniform) {
-              completedStacks++;
+          if (isUniform && !countedStacks.has(stackId)) {
+              countedStacks.add(stackId); // Lägg till stapelns ID i setet
+              completedStacks++; // Öka antalet färdiga staplar
+              updatePoints(); // Uppdatera poängen
           }
       }
   });
-  //If all items are in the correct stack
+
+  // Kontrollera om alla staplar är färdiga
   if (completedStacks === numberOfItems) {
     setTimeout(() => {
-      alert("Congratulations! You won!");
-    }, 300); 
-      //TODO  lägga till andra åtgärder som att inaktivera vidare drag
+      alert(`Congratulations! You won! Total score is ${points}`);
+    }, 300);
+    // TODO: Lägg till andra åtgärder som att inaktivera vidare drag
   }
 }
+
 
 //**__________Check Lose Condition__________ */
 function checkLoseCondition() {
@@ -370,7 +382,14 @@ function updateMoveCount() {
 }
 
 //*'__________Count Points___________'
-
+function updatePoints() {
+  points = 200 + (completedStacks * 50) - (moveCount * 10);
+  const pointsElement = document.querySelector('.points');
+  if (pointsElement) {
+    pointsElement.textContent = `Points: ${points}`;
+  }
+  console.log("Points:", points);
+}
 
 
 renderGame();
