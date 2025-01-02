@@ -341,7 +341,6 @@ function checkWinCondition() {
     setTimeout(() => {
       alert(`Congratulations! You won! Total score is ${points}`);
     }, 300);
-    // TODO: Lägg till andra åtgärder som att inaktivera vidare drag
   }
 }
 

@@ -6,10 +6,13 @@
 }
 
 .stack {
+  border-bottom: solid;
+  border-width: 20px;
+  border-image: repeating-radial-gradient(circle at 10px, brown, rgb(127, 36, 36) 2px, rgb(85, 27, 27) 4px, rgb(34, 12, 12) 2px) 1;
   width: 61px;
   height: 211px;
-  border: 2px solid #1c1a1a;
-  border-top: none;
+  /* border: 2px solid #1c1a1a;
+  border-top: none; */
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -23,18 +26,12 @@
   width: 45px;
   height: 45px;
   margin: 2px 0;
-  background-color: red;
   object-fit: contain;
   cursor: grab;
   object-fit: contain;
 }
 .color-Red { background-color: red; }
 .color-Blue { background-color: blue; }
-.color-Green { background-color: green; }
-.color-Yellow { background-color: yellow; }
-.color-Black { background-color: rgb(3, 3, 3); }
-.color-Purple { background-color: rgb(214, 7, 246); }
-.color-Pink { background-color: rgb(242, 30, 171); }
 
 .item-piece.dragging {
   opacity: 0.5;
