@@ -1,3 +1,49 @@
+:root {
+  --primary-color: #e91e63;
+  --highlight-color: #e91e63;
+  --locked-opacity: 0.5;
+  --restart-btn-bg-color: #c10d1a;
+  --restart-btn-border-color: black;
+  --font-size: 1em;
+  --font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  --font-weight: 700;
+  --border-radius: 2px;
+  --padding: 10px;
+}
+
+body {
+  margin: 1rem 2rem;
+  padding: 0;
+  background-image: url("assets/background.webp");
+  background-size: cover; 
+  background-position: center;
+  font-family: var(--font-family);
+}
+
+h1 {
+  font-size: 3em;
+  text-shadow: #a99880 2px 4px 2px;
+  margin: 2rem 0 1rem 0;
+}
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+#status-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  font-size: 2em;
+  width: clamp(18rem, 100%, 28rem);
+  & p {
+    margin: 0;
+  }
+}
+
 #game-container {
   display: flex;
   flex-wrap: wrap;
@@ -7,18 +53,18 @@
 
 .stack {
   border-bottom: solid;
-  border-width: 20px;
-  border-image: repeating-radial-gradient(circle at 10px, brown, rgb(127, 36, 36) 2px, rgb(85, 27, 27) 4px, rgb(34, 12, 12) 2px) 1;
-  width: 61px;
+  border-width: 11px;
+  border-image: repeating-radial-gradient(circle at 10px, #cdcdc7, rgb(219 218 215) 2px, rgb(215 207 193) 4px, rgb(34, 12, 12) 2px) 1;
+  width: 65px;
   height: 211px;
-  /* border: 2px solid #1c1a1a;
-  border-top: none; */
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
-  background-color: #f9f9f9;
   position: relative;
+  filter: drop-shadow(5px 6px 2px grey);
+  /* box-shadow: gray 1px 5px 5px;  Altenetive*/ 
+  cursor: pointer;
 }
 
 .item-piece {
@@ -35,34 +81,28 @@
 
 .item-piece.dragging {
   opacity: 0.5;
-  border: 2px dashed #007bff;
+  border: 2px dashed var(--primary-color);
   transform: scale(1.1);
   /* pointer-events: none; Förhindrar att elementet fångar onödiga händelser */
   z-index: 10;
 }
 
 .selected-item {
-  border: 3px solid yellow; /* Anpassa styling för markerat objekt */
-  box-shadow: 0 0 10px rgba(255, 255, 0, 0.7);
+  border: 3px solid var(--highlight-color); 
+  /* box-shadow: 0 0 10px rgba(255, 255, 0, 0.7); */
 }
 
 .stack.locked {
-  opacity: 0.5; /* Gör stapeln halvgenomskinlig */
+  opacity: var(--locked-opacity); /* Gör stapeln halvgenomskinlig */
   pointer-events: none; /* Inaktivera pekarhändelser */
 }
 
-
-/* .stacked {
-  position: absolute;
-} */
-
-/* CSS för max 4 objekt */
-/* .position-0 { bottom: 0; } */
-/* .position-1 { bottom: 35px; } */
-/* .position-2 { bottom: 70px; } */
-/* .position-3 { bottom: 105px; } */
-
-
-/* .empty-slot {
-  border-style: solid;
-} */
+#restart-btn {
+  background-color: var(--restart-btn-bg-color);
+  border: solid var(--restart-btn-border-color) 1px;
+  font-family: var(--font-family);
+  font-size: var(--font-size);
+  font-weight: var(--font-weight);
+  border-radius: var(--border-radius);
+  padding: var(--padding);
+}

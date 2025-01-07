@@ -1,9 +1,15 @@
-let currentDraggedElement;
-let moveCount = 0;
+const gameTitle = "Sorting game"; // Ändra denna variabel till vad kunden vill att rubriken ska vara
 const numberOfItems = 4 ;// Adjust this to select number of colors
+let points = 200; // Adjust this to set starting score
+
+let moveCount = 0;
+let currentDraggedElement;
 let completedStacks = 0;
 let countedStacks = new Set();
-let points = 200;
+
+
+// Uppdatera innehållet i <h1>-elementet
+document.getElementById('game-title').textContent = gameTitle;
 
 async function renderGame() {
   const gameContainer = document.getElementById("game-container");
@@ -120,7 +126,7 @@ function moveItemToStack(item, targetStack) {
     console.log("Ogiltigt drag, inget move räknas.");
   }
 }
-//*'___________Kontrollera om flytten är giltig___________'
+//*'___________Control if move is valid___________'
 function isValidMove(targetStack, draggedElement, itemsInTarget) {
   const maxItems = 4;
 
