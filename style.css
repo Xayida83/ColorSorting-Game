@@ -1,4 +1,5 @@
 :root {
+  --background-image: url("assets/background.webp");
   --primary-color: #e91e63;
   --highlight-color: #e91e63;
   --locked-opacity: 0.5;
@@ -9,12 +10,18 @@
   --font-weight: 700;
   --border-radius: 2px;
   --padding: 10px;
+  /** __Border__ */
+  --gradient-color1: #cdcdc7;
+  --gradient-color2: rgb(219, 218, 215);
+  --gradient-color3: rgb(215, 207, 193);
+  --gradient-color4: rgb(34, 12, 12);
+  --border-width: 11px;
 }
 
 body {
   margin: 1rem 2rem;
   padding: 0;
-  background-image: url("assets/background.webp");
+  background-image: var(--background-image);
   background-size: cover; 
   background-position: center;
   font-family: var(--font-family);
@@ -43,6 +50,10 @@ h1 {
     margin: 0;
   }
 }
+.count{
+  font-weight: var(--font-weight);
+  margin: 0;
+}
 
 #game-container {
   display: flex;
@@ -53,8 +64,8 @@ h1 {
 
 .stack {
   border-bottom: solid;
-  border-width: 11px;
-  border-image: repeating-radial-gradient(circle at 10px, #cdcdc7, rgb(219 218 215) 2px, rgb(215 207 193) 4px, rgb(34, 12, 12) 2px) 1;
+  border-width: var(--border-width);
+  border-image: repeating-radial-gradient(circle at 10px, var(--gradient-color1), var(--gradient-color2) 2px, var(--gradient-color3) 4px, var(--gradient-color4) 2px) 1;
   width: 65px;
   height: 211px;
   display: flex;
@@ -62,8 +73,11 @@ h1 {
   justify-content: flex-end;
   align-items: center;
   position: relative;
-  filter: drop-shadow(5px 6px 2px grey);
-  /* box-shadow: gray 1px 5px 5px;  Altenetive*/ 
+  /* filter: drop-shadow(5px 6px 2px grey); */
+  /* box-shadow: gray 1px 5px 5px;    */
+  -webkit-box-shadow: 2px 10px 5px 0px rgba(171,164,171,0.34);
+  -moz-box-shadow: 2px 10px 5px 0px rgba(171,164,171,0.34);
+  box-shadow: 4px 6px 5px 0px rgba(171,164,171,0.34);
   cursor: pointer;
 }
 

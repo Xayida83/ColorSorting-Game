@@ -94,6 +94,8 @@ function generateShuffledStacks(items) {
   return stacks;
 }
 
+
+
 //*'___________Move objekt to stack___________'
 
 function moveItemToStack(item, targetStack) {
@@ -104,27 +106,22 @@ function moveItemToStack(item, targetStack) {
   // Kontrollera om flytten är giltig
   if (isValidMove(targetStack, item, itemsInTarget)) {
     const currentStack = item.parentNode;
-
-    // Flytta objektet till toppen av stacken
+    // Move the item to the top of the stack
     if (itemsInTarget.length > 0) {
       targetStack.insertBefore(item, itemsInTarget[0]);
     } else {
       targetStack.appendChild(item);
     }
 
-    // Öka drag-räknaren och uppdatera status
     moveCount++;
     updateMoveCount();
     updatePoints();
 
     updateDraggableStates(); // Uppdatera draggable-attributen  
-
-    // Kontrollera spelets status
+    // Sheck game status
     checkWinCondition();
     checkLoseCondition();
-  } else {
-    console.log("Ogiltigt drag, inget move räknas.");
-  }
+  } 
 }
 //*'___________Control if move is valid___________'
 function isValidMove(targetStack, draggedElement, itemsInTarget) {
@@ -397,7 +394,7 @@ function checkLoseCondition() {
 function updateMoveCount() {
   const movesElement = document.querySelector('.moves');
   if (movesElement) {
-    movesElement.textContent = `Moves: ${moveCount}`;
+    movesElement.textContent = `${moveCount}`;
   }
 }
 
@@ -406,7 +403,7 @@ function updatePoints() {
   points = 200 + (completedStacks * 50) - (moveCount * 10);
   const pointsElement = document.querySelector('.points');
   if (pointsElement) {
-    pointsElement.textContent = `Points: ${points}`;
+    pointsElement.textContent = `${points}`;
   }
   console.log("Points:", points);
 }
