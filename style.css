@@ -22,8 +22,9 @@ body {
   margin: 1rem 2rem;
   padding: 0;
   background-image: var(--background-image);
-  background-size: cover; 
+  background-size: auto; 
   background-position: center;
+  background-repeat: no-repeat;
   font-family: var(--font-family);
 }
 
@@ -119,4 +120,20 @@ h1 {
   border-radius: var(--border-radius);
   padding: var(--padding);
   box-shadow: 5px 6px 4px grey;
+}
+.notification {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #ff4d4d;
+  color: white;
+  padding: 10px 20px;
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  font-family: var(--font-family);
+  font-size: var(--font-size);
+  font-weight: var(--font-weight);
+  min-width: 10rem;
 }

@@ -1,6 +1,8 @@
-const gameTitle = "Sorting game"; // Ändra denna variabel till vad kunden vill att rubriken ska vara
-const numberOfItems = 4 ;// Adjust this to select number of colors
-let points = 200; // Adjust this to set starting score
+const gameTitle = "Sorting game"; // Change for game title
+const numberOfItems = 4 ;// Adjust this to select number of items
+let startPoints = 300; // Adjust this to set starting score
+let stackPoints = 50; // Adjust this to set points for each completed stack
+let movePoints = 10; // Adjust this to set points for each move
 
 let moveCount = 0;
 let currentDraggedElement;
@@ -67,6 +69,7 @@ async function renderGame() {
       }
   } catch (error) {
       console.error("Failed to load JSON data:", error);
+      displayNotification("Failed to load game data. Please try again later.");
   }
 
   await enableClickToMove(); // Aktivera klick-funktionaliteten
@@ -338,7 +341,7 @@ function resetGame() {
   gameContainer.innerHTML = ""; 
   moveCount = 0; 
   completedStacks = 0; 
-  points = 200;
+  points = startPoints;
   countedStacks.clear();
   updateMoveCount();
   updatePoints();
@@ -431,12 +434,27 @@ function updateMoveCount() {
 
 //*'__________Count Points___________'
 function updatePoints() {
-  points = 200 + (completedStacks * 50) - (moveCount * 10);
+  points = startPoints + (completedStacks * stackPoints) - (moveCount * movePoints);
   const pointsElement = document.querySelector('.points');
   if (pointsElement) {
     pointsElement.textContent = `${points}`;
   }
   console.log("Points:", points);
+}
+
+
+//*'__________Display Notification__________'	
+function displayNotification(message) {
+  const notification = document.createElement("div");
+  notification.className = "notification";
+  notification.textContent = message;
+
+  document.body.appendChild(notification);
+
+  // Ta bort meddelandet efter 5 sekunder
+  setTimeout(() => {
+    notification.remove();
+  }, 10000);
 }
 
 
