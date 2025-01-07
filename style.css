@@ -73,11 +73,10 @@ h1 {
   justify-content: flex-end;
   align-items: center;
   position: relative;
-  /* filter: drop-shadow(5px 6px 2px grey); */
-  /* box-shadow: gray 1px 5px 5px;    */
-  -webkit-box-shadow: 2px 10px 5px 0px rgba(171,164,171,0.34);
+  filter: drop-shadow(5px 6px 2px grey);
+  /* -webkit-box-shadow: 2px 10px 5px 0px rgba(171,164,171,0.34);
   -moz-box-shadow: 2px 10px 5px 0px rgba(171,164,171,0.34);
-  box-shadow: 4px 6px 5px 0px rgba(171,164,171,0.34);
+  box-shadow: 4px 6px 5px 0px rgba(171,164,171,0.34); */
   cursor: pointer;
 }
 
@@ -119,4 +118,5 @@ h1 {
   font-weight: var(--font-weight);
   border-radius: var(--border-radius);
   padding: var(--padding);
+  box-shadow: 5px 6px 4px grey;
 }
