@@ -1,6 +1,6 @@
 const gameTitle = "Sorting game"; // Change for game title
 const numberOfItems = 4 ;// Adjust this to select number of items
-let startPoints = 300; // Adjust this to set starting score
+let startPoints = 200; // Adjust this to set starting score
 let stackPoints = 50; // Adjust this to set points for each completed stack
 let movePoints = 10; // Adjust this to set points for each move
 
@@ -435,11 +435,15 @@ function updateMoveCount() {
 //*'__________Count Points___________'
 function updatePoints() {
   points = startPoints + (completedStacks * stackPoints) - (moveCount * movePoints);
+
+  // Visa poäng, men inte negativa
+  const pointsToShow = points < 0 ? 0 : points;
+
   const pointsElement = document.querySelector('.points');
   if (pointsElement) {
-    pointsElement.textContent = `${points}`;
+    pointsElement.textContent = `${pointsToShow}`;
   }
-  console.log("Points:", points);
+  console.log("Points:", pointsToShow);
 }
 
 
