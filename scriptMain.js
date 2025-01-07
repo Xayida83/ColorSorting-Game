@@ -88,8 +88,39 @@ function generateShuffledStacks(items) {
 
   // Dela upp i staplar
   const stacks = [];
-  for (let i = 0; i < allItems.length; i += 4) {
-      stacks.push(allItems.slice(i, i + 4));
+  const columnCount = Math.ceil(allItems.length / 4);
+
+  // Initiera tomma kolumner
+  for (let i = 0; i < columnCount; i++) {
+    stacks.push([]);
+  }
+
+  // Fördela items utan att få fyra av samma i en stapel
+  while (allItems.length > 0) {
+    const item = allItems.pop();
+
+    // Leta efter en kolumn som inte redan har 4 av samma item
+    let placed = false;
+    for (let i = 0; i < columnCount; i++) {
+        const currentStack = stacks[i];
+        const itemCount = currentStack.filter(stackItem => stackItem === item).length;
+
+        if (itemCount < 3 && currentStack.length < 4) {
+            currentStack.push(item);
+            placed = true;
+            break;
+        }
+    }
+
+    // Om ingen kolumn uppfyller kraven, placera i första tillgängliga
+    if (!placed) {
+        for (let i = 0; i < columnCount; i++) {
+            if (stacks[i].length < 4) {
+                stacks[i].push(item);
+                break;
+            }
+        }
+    }
   }
   return stacks;
 }
