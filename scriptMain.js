@@ -1,13 +1,13 @@
 const gameTitle = "Sorting game"; // Change for game title
-const numberOfItems = 4 ;// Adjust this to select number of items
+const numberOfItems = 6;// Adjust this to select number of items
 let startPoints = 200; // Adjust this to set starting score
 let stackPoints = 50; // Adjust this to set points for each completed stack
 let movePoints = 10; // Adjust this to set points for each move
 
 // Configuration options
 const config = {
-  limitMoves: false, // Customer can toggle this (true/false)
-  maxMoves: 3 // Default maximum moves
+  limitMoves: true, // Customer can toggle this (true/false)
+  maxMoves: 13 // Default maximum moves
 };
 
 let moveCount = 0;
