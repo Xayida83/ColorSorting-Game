@@ -10,12 +10,17 @@
   --font-weight: 700;
   --border-radius: 2px;
   --padding: 10px;
+  /**__Stack__ */
+  --stack-background-img: url("assets/shelfs.png");
+  --stack-width: 65px;
   /** __Border__ */
-  --gradient-color1: #cdcdc7;
+  /* --gradient-color1: #cdcdc7;
   --gradient-color2: rgb(219, 218, 215);
   --gradient-color3: rgb(215, 207, 193);
-  --gradient-color4: rgb(34, 12, 12);
+  --gradient-color4: rgb(34, 12, 12); */
   --border-width: 11px;
+  /** __Item__ */
+  --item-width: 42px;
 }
 
 body {
@@ -64,27 +69,31 @@ h1 {
 }
 
 .stack {
-  border-bottom: solid;
-  border-width: var(--border-width);
-  border-image: repeating-radial-gradient(circle at 10px, var(--gradient-color1), var(--gradient-color2) 2px, var(--gradient-color3) 4px, var(--gradient-color4) 2px) 1;
-  width: 65px;
-  height: 211px;
+  /* border-bottom: solid; */
+  background-image: var(--stack-background-img);
+  background-size: cover; 
+  background-position: center; 
+  background-repeat: no-repeat; 
+  /* border-width: var(--border-width); */
+  /* border-image: repeating-radial-gradient(circle at 10px, var(--gradient-color1), var(--gradient-color2) 2px, var(--gradient-color3) 4px, var(--gradient-color4) 2px) 1; */
+  width: var(--stack-width);
+  aspect-ratio: 1 / 3;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
   position: relative;
-  filter: drop-shadow(5px 6px 2px grey);
-  /* -webkit-box-shadow: 2px 10px 5px 0px rgba(171,164,171,0.34);
+  /* filter: drop-shadow(5px 6px 2px grey); */
+  -webkit-box-shadow: 2px 10px 5px 0px rgba(171,164,171,0.34);
   -moz-box-shadow: 2px 10px 5px 0px rgba(171,164,171,0.34);
-  box-shadow: 4px 6px 5px 0px rgba(171,164,171,0.34); */
+  box-shadow: 4px 6px 5px 0px rgba(171,164,171,0.34);
   cursor: pointer;
 }
 
 .item-piece {
   transition: transform ease, opacity ease;
-  width: 45px;
-  height: 45px;
+  width: var(--item-width);
+  aspect-ratio: 1 / 1;
   margin: 2px 0;
   object-fit: contain;
   cursor: grab;
