@@ -6,7 +6,7 @@ let movePoints = 10; // Adjust this to set points for each move
 
 // Configuration options
 const config = {
-  limitMoves: true, // Customer can toggle this (true/false)
+  limitMoves: false, // Customer can toggle this (true/false)
   maxMoves: 3 // Default maximum moves
 };
 
@@ -19,7 +19,23 @@ let countedStacks = new Set();
 // Uppdatera innehållet i <h1>-elementet
 document.getElementById('game-title').textContent = gameTitle;
 
+function renderStatusContainer() {
+  const statusContainer = document.getElementById('status-container');
+  statusContainer.innerHTML = `
+    <div>
+      <p>Moves: </p>
+      <p class="count moves">${config.limitMoves ? `${moveCount}/${config.maxMoves}` : moveCount}</p>
+    </div>
+    <div>
+      <p>Score: </p>
+      <p class="count points">${startPoints}</p>
+    </div>
+  `;
+}
+
 async function renderGame() {
+  renderStatusContainer();
+  
   const gameContainer = document.getElementById("game-container");
 
    // Kontrollera om vi är på en touch-enhet
@@ -436,24 +452,11 @@ function checkLoseCondition() {
   }
 }
 
-// // Funktion för att inaktivera alla dragbara objekt vid förlust
-// function disableGameInteractions() {
-//   const allItems = document.querySelectorAll('.item-piece');
-//   allItems.forEach(item => {
-//     item.setAttribute('draggable', 'false');
-//   });
-
-//   const stacks = document.querySelectorAll('.stack');
-//   stacks.forEach(stack => {
-//     stack.classList.add('disabled');
-//   });
-// }
-
 //**________Count Moves_________ */
 function updateMoveCount() {
   const movesElement = document.querySelector('.moves');
   if (movesElement) {
-    movesElement.textContent = `${moveCount} / ${config.limitMoves ? config.maxMoves : "∞"}`;
+    movesElement.textContent = config.limitMoves ? `${moveCount}/${config.maxMoves}` : moveCount;
   }
 }
 
