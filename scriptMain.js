@@ -4,6 +4,12 @@ let startPoints = 200; // Adjust this to set starting score
 let stackPoints = 50; // Adjust this to set points for each completed stack
 let movePoints = 10; // Adjust this to set points for each move
 
+// Configuration options
+const config = {
+  limitMoves: true, // Customer can toggle this (true/false)
+  maxMoves: 3 // Default maximum moves
+};
+
 let moveCount = 0;
 let currentDraggedElement;
 let completedStacks = 0;
@@ -131,13 +137,12 @@ function generateShuffledStacks(items) {
 
 
 //*'___________Move objekt to stack___________'
-
 function moveItemToStack(item, targetStack) {
   if (!item || !targetStack) return;
 
   const itemsInTarget = targetStack.querySelectorAll('.item-piece');
 
-  // Kontrollera om flytten är giltig
+  // Check if move is valid
   if (isValidMove(targetStack, item, itemsInTarget)) {
     const currentStack = item.parentNode;
     // Move the item to the top of the stack
@@ -149,14 +154,20 @@ function moveItemToStack(item, targetStack) {
 
     moveCount++;
     updateMoveCount();
-    updatePoints();
+    // Check if move limit is activated
+    if (config.limitMoves && moveCount >= config.maxMoves) {
+      checkLoseCondition(); 
+      return;
+    }
 
-    updateDraggableStates(); // Uppdatera draggable-attributen  
-    // Sheck game status
+    //Check game status
     checkWinCondition();
     checkLoseCondition();
+    updatePoints();
+    updateDraggableStates(); // Uppdatera draggable-attributen  
   } 
 }
+
 //*'___________Control if move is valid___________'
 function isValidMove(targetStack, draggedElement, itemsInTarget) {
   const maxItems = 4;
@@ -359,16 +370,16 @@ function checkWinCondition() {
       const stackId = stack.dataset.stackId; // Hämtar stackens unika ID
 
       if (items.length === 4) {
-          // Kontrollera om alla objekt i stapeln har samma namn
+          //Check if all objects in the stack have the same name
           const firstItemName = items[0].dataset.name;
           const isUniform = Array.from(items).every(item => item.dataset.name === firstItemName);
 
           if (isUniform && !countedStacks.has(stackId)) {
-              countedStacks.add(stackId); // Lägg till stapelns ID i setet
-              completedStacks++; // Öka antalet färdiga staplar
-              updatePoints(); // Uppdatera poängen
+              countedStacks.add(stackId); 
+              completedStacks++; 
+              updatePoints(); 
 
-              lockStack(stack); // Lås stapeln
+              lockStack(stack); 
           }
       }
   });
@@ -376,7 +387,7 @@ function checkWinCondition() {
   // Kontrollera om alla staplar är färdiga
   if (completedStacks === numberOfItems) {
     setTimeout(() => {
-      alert(`Congratulations! You won! Total score is ${points}`);
+      displayNotification(`Congratulations! You won! Total score is ${points}`);
     }, 300);
   }
 }
@@ -417,18 +428,32 @@ function checkLoseCondition() {
       }
   });
 
-  if (!hasValidMove) {
+  if (!hasValidMove || (config.limitMoves && moveCount >= config.maxMoves)) {
      setTimeout(() => {
-      alert("Game Over! No more valid moves.");
+      displayNotification("Game Over! No more valid moves.")
     }, 300); 
+
   }
 }
+
+// // Funktion för att inaktivera alla dragbara objekt vid förlust
+// function disableGameInteractions() {
+//   const allItems = document.querySelectorAll('.item-piece');
+//   allItems.forEach(item => {
+//     item.setAttribute('draggable', 'false');
+//   });
+
+//   const stacks = document.querySelectorAll('.stack');
+//   stacks.forEach(stack => {
+//     stack.classList.add('disabled');
+//   });
+// }
 
 //**________Count Moves_________ */
 function updateMoveCount() {
   const movesElement = document.querySelector('.moves');
   if (movesElement) {
-    movesElement.textContent = `${moveCount}`;
+    movesElement.textContent = `${moveCount} / ${config.limitMoves ? config.maxMoves : "∞"}`;
   }
 }
 
@@ -449,17 +474,44 @@ function updatePoints() {
 
 //*'__________Display Notification__________'	
 function displayNotification(message) {
+  // Hitta containern
+  const gameContainer = document.getElementById("game-container");
+
+  // Rensa innehållet i containern
+  gameContainer.innerHTML = "";
+
+  // Skapa en ny div för notifikationen
   const notification = document.createElement("div");
   notification.className = "notification";
-  notification.textContent = message;
 
-  document.body.appendChild(notification);
+  // Lägg till meddelandet
+  const messageElement = document.createElement("p");
+  messageElement.textContent = message;
+  notification.appendChild(messageElement);
 
-  // Ta bort meddelandet efter 5 sekunder
-  setTimeout(() => {
-    notification.remove();
-  }, 10000);
+  // Skapa knappen för att spela igen
+  const playAgainButton = document.createElement("button");
+  playAgainButton.textContent = "Play Again";
+  playAgainButton.className = "btn play-again";
+  playAgainButton.addEventListener("click", () => {
+    resetGame(); // Återställ spelet
+  });
+  notification.appendChild(playAgainButton);
+
+  // Skapa knappen för att gå vidare
+  const proceedButton = document.createElement("button");
+  proceedButton.textContent = "Proceed";
+  proceedButton.className = "btn proceed";
+  proceedButton.addEventListener("click", () => {
+    // Lägg till din logik för att gå vidare
+    alert("Funktion för att gå vidare implementeras här!");
+  });
+  notification.appendChild(proceedButton);
+
+  // Lägg till notifikationen i containern
+  gameContainer.appendChild(notification);
 }
+
 
 
 renderGame();

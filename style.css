@@ -47,11 +47,12 @@ h1 {
 
 #status-container {
   display: flex;
-  justify-content: space-between;
+  flex-direction: row;
+  justify-content: space-around;
   align-items: center;
   margin-bottom: 1rem;
   font-size: 2em;
-  width: clamp(18rem, 100%, 28rem);
+  width: clamp(15rem, 100%, 25rem);
   & p {
     margin: 0;
   }
@@ -70,6 +71,7 @@ h1 {
 
 .stack {
   /* border-bottom: solid; */
+  border-radius: 7px;
   background-image: var(--stack-background-img);
   background-size: cover; 
   background-position: center; 
@@ -84,9 +86,9 @@ h1 {
   align-items: center;
   position: relative;
   /* filter: drop-shadow(5px 6px 2px grey); */
-  -webkit-box-shadow: 2px 10px 5px 0px rgba(171,164,171,0.34);
+  /* -webkit-box-shadow: 2px 10px 5px 0px rgba(171,164,171,0.34);
   -moz-box-shadow: 2px 10px 5px 0px rgba(171,164,171,0.34);
-  box-shadow: 4px 6px 5px 0px rgba(171,164,171,0.34);
+  box-shadow: 4px 6px 5px 0px rgba(171,164,171,0.34); */
   cursor: pointer;
 }
 
@@ -131,8 +133,11 @@ h1 {
   box-shadow: 5px 6px 4px grey;
 }
 .notification {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
   position: fixed;
-  top: 20px;
+  top: 26vh;
   left: 50%;
   transform: translateX(-50%);
   background-color: #ff4d4d;
