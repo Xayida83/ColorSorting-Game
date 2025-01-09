@@ -1,5 +1,5 @@
 const gameTitle = "Sorting game"; // Change for game title
-const numberOfItems = 6;// Adjust this to select number of items
+const numberOfItems = 4;// Adjust this to select number of items
 let startPoints = 200; // Adjust this to set starting score
 let stackPoints = 50; // Adjust this to set points for each completed stack
 let movePoints = 10; // Adjust this to set points for each move
@@ -7,7 +7,7 @@ let movePoints = 10; // Adjust this to set points for each move
 // Configuration options
 const config = {
   limitMoves: true, // Customer can toggle this (true/false)
-  maxMoves: 13 // Default maximum moves
+  maxMoves: 15 // Default maximum moves
 };
 
 let moveCount = 0;
@@ -170,11 +170,11 @@ function moveItemToStack(item, targetStack) {
 
     moveCount++;
     updateMoveCount();
-    // Check if move limit is activated
-    if (config.limitMoves && moveCount >= config.maxMoves) {
-      checkLoseCondition(); 
-      return;
-    }
+    // // Check if move limit is activated
+    // if (config.limitMoves && moveCount >= config.maxMoves) {
+    //   checkLoseCondition(); 
+    //   return;
+    // }
 
     //Check game status
     checkWinCondition();
@@ -405,6 +405,7 @@ function checkWinCondition() {
     setTimeout(() => {
       displayNotification(`Congratulations! You won! Total score is ${points}`);
     }, 300);
+    return;
   }
 }
 
@@ -423,6 +424,10 @@ function lockStack(stack) {
 
 //**__________Check Lose Condition__________ */
 function checkLoseCondition() {
+  if (completedStacks === numberOfItems) {
+    return; // Spelet är redan vunnet, ingen anledning att kontrollera förlust
+  }
+
   const stacks = document.querySelectorAll(".stack");
   let hasValidMove = false;
 
