@@ -38,21 +38,20 @@ async function renderGame() {
   
   const gameContainer = document.getElementById("game-container");
 
-   // Kontrollera om vi är på en touch-enhet
-   const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    // Check if we are on a touch device
+  const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
   try {
-      // Hämta JSON-data
+      //* Hämta JSON-data
       const response = await fetch("items.json");
       const items = await response.json();
 
       // Limit to selected number of colors
       const selectedItems = items.slice(0, numberOfItems);
 
-      // Skapa dynamiska staplar
       const stacks = generateShuffledStacks(selectedItems);
 
-      // Rendera staplar
+      // Render stacks
       stacks.forEach((stack, stackIndex) => {
           const stackDiv = document.createElement("div");
           stackDiv.className = "stack";
@@ -79,27 +78,26 @@ async function renderGame() {
           // Lägg till drop-event till stacken
           addDropEvents(stackDiv);
       });
-
-      // Lägg till tomma platser
+      // Add two empty stacks
       for (let i = 0; i < 2; i++) {
           const emptySlot = document.createElement("div");
           emptySlot.className = "stack";
-          emptySlot.dataset.stackId = stacks.length + i; // Identifiera stacken
+          emptySlot.dataset.stackId = stacks.length + i; 
 
           gameContainer.appendChild(emptySlot);
-          addDropEvents(emptySlot); // Lägg till drop-event-hanterare
+          addDropEvents(emptySlot); 
       }
   } catch (error) {
       console.error("Failed to load JSON data:", error);
       displayNotification("Failed to load game data. Please try again later.");
   }
 
-  await enableClickToMove(); // Aktivera klick-funktionaliteten
-  await enableDragAndDrop(); // Aktivera drag-and-drop
-  updateDraggableStates();   // Uppdatera draggable
+  await enableClickToMove(); 
+  await enableDragAndDrop(); 
+  updateDraggableStates();   
 }
 
-// Generera blandade staplar från färgerna
+// Generates shuffled stacks
 function generateShuffledStacks(items) {
   const allItems = [];
   items.forEach(item => {
@@ -108,23 +106,19 @@ function generateShuffledStacks(items) {
       }
   });
 
-  // Blanda färger
+  //Mix items
   allItems.sort(() => Math.random() - 0.5);
 
-  // Dela upp i staplar
   const stacks = [];
   const columnCount = Math.ceil(allItems.length / 4);
 
-  // Initiera tomma kolumner
   for (let i = 0; i < columnCount; i++) {
     stacks.push([]);
   }
-
-  // Fördela items utan att få fyra av samma i en stapel
+  // look for a column that does not already have 4 of the same item
   while (allItems.length > 0) {
     const item = allItems.pop();
-
-    // Leta efter en kolumn som inte redan har 4 av samma item
+    // Looke for a column that does not already have 4 of the same item
     let placed = false;
     for (let i = 0; i < columnCount; i++) {
         const currentStack = stacks[i];
@@ -136,8 +130,7 @@ function generateShuffledStacks(items) {
             break;
         }
     }
-
-    // Om ingen kolumn uppfyller kraven, placera i första tillgängliga
+    // If no column meets the requirements, place in first available
     if (!placed) {
         for (let i = 0; i < columnCount; i++) {
             if (stacks[i].length < 4) {
@@ -170,17 +163,12 @@ function moveItemToStack(item, targetStack) {
 
     moveCount++;
     updateMoveCount();
-    // // Check if move limit is activated
-    // if (config.limitMoves && moveCount >= config.maxMoves) {
-    //   checkLoseCondition(); 
-    //   return;
-    // }
-
+    
     //Check game status
     checkWinCondition();
     checkLoseCondition();
     updatePoints();
-    updateDraggableStates(); // Uppdatera draggable-attributen  
+    updateDraggableStates(); 
   } 
 }
 
@@ -198,7 +186,7 @@ function isValidMove(targetStack, draggedElement, itemsInTarget) {
       return true;
   }
 
-  // Kontrollera om namn matchar det första objektet i stacken
+  // Check if the first item in the target stack has the same color
   const firstItemName = itemsInTarget[0].dataset.name;
   if (firstItemName === draggedElement.dataset.name) {
       return true;
@@ -217,7 +205,7 @@ function enableClickToMove() {
    
     if (clickedStack) {
       if (selectedItem) {
-        // Kontrollera om objektet redan är i stacken
+        // Check if the object is already in the stack
         if (selectedItem.parentNode === clickedStack) {
           console.log("Objektet är redan i denna stack, inget move räknas.");
         } else {
@@ -286,13 +274,13 @@ function addDragEvents(item) {
   });
 
   item.addEventListener("dragend", () => {
-    item.classList.remove("dragging"); // Ta bort styling när drag avslutas
+    item.classList.remove("dragging");
   });
 }
 
 function addDropEvents(stack) {
   stack.addEventListener("dragover", (e) => {
-    e.preventDefault(); // Möjliggör drop
+    e.preventDefault(); 
   });
 }
 
@@ -302,7 +290,7 @@ function updateDraggableStates() {
   stacks.forEach(stack => {
       const items = stack.querySelectorAll(".item-piece");
       items.forEach((item, index) => {
-          item.draggable = index === 0; // Endast första objektet är draggable
+          item.draggable = index === 0; // Only first item in stack is draggable
       });
   });
 }
@@ -319,7 +307,6 @@ function addTouchEvents(item) {
       currentDraggedElement = item;
       item.classList.add("dragging");
 
-      // Spara startpositionen
       const touch = e.touches[0];
       initialX = touch.clientX;
       initialY = touch.clientY;
@@ -383,7 +370,7 @@ function checkWinCondition() {
 
   stacks.forEach(stack => {
       const items = stack.querySelectorAll(".item-piece");
-      const stackId = stack.dataset.stackId; // Hämtar stackens unika ID
+      const stackId = stack.dataset.stackId; // Get stack ID
 
       if (items.length === 4) {
           //Check if all objects in the stack have the same name
@@ -400,7 +387,7 @@ function checkWinCondition() {
       }
   });
 
-  // Kontrollera om alla staplar är färdiga
+  // check if all stacks are completed
   if (completedStacks === numberOfItems) {
     setTimeout(() => {
       displayNotification(`Congratulations! You won! Total score is ${points}`);
@@ -411,21 +398,21 @@ function checkWinCondition() {
 
 //**__________Lock Stack__________ */
 function lockStack(stack) {
-  stack.classList.add("locked"); // Lägg till en klass för styling som indikerar låst tillstånd
+  stack.classList.add("locked"); 
   const items = stack.querySelectorAll(".item-piece");
 
   items.forEach(item => {
-    item.draggable = false; // Gör objekt i stapeln ej flyttbara
+    item.draggable = false; 
   });
 
-  stack.addEventListener("dragover", (e) => e.preventDefault()); // Förhindra dropp
+  stack.addEventListener("dragover", (e) => e.preventDefault()); 
 }
 
 
 //**__________Check Lose Condition__________ */
 function checkLoseCondition() {
   if (completedStacks === numberOfItems) {
-    return; // Spelet är redan vunnet, ingen anledning att kontrollera förlust
+    return; 
   }
 
   const stacks = document.querySelectorAll(".stack");
@@ -482,31 +469,31 @@ function updatePoints() {
 
 //*'__________Display Notification__________'	
 function displayNotification(message) {
-  // Hitta containern
+  var restartBtn = document.getElementById('restart-btn');
+  
+  if (restartBtn) {
+      restartBtn.style.display = 'none';
+  }
+
   const gameContainer = document.getElementById("game-container");
 
-  // Rensa innehållet i containern
   gameContainer.innerHTML = "";
 
-  // Skapa en ny div för notifikationen
   const notification = document.createElement("div");
   notification.className = "notification";
 
-  // Lägg till meddelandet
   const messageElement = document.createElement("p");
   messageElement.textContent = message;
   notification.appendChild(messageElement);
 
-  // Skapa knappen för att spela igen
   const playAgainButton = document.createElement("button");
   playAgainButton.textContent = "Play Again";
   playAgainButton.className = "btn play-again";
   playAgainButton.addEventListener("click", () => {
-    resetGame(); // Återställ spelet
+    resetGame(); 
   });
   notification.appendChild(playAgainButton);
 
-  // Skapa knappen för att gå vidare
   const proceedButton = document.createElement("button");
   proceedButton.textContent = "Proceed";
   proceedButton.className = "btn proceed";
@@ -516,7 +503,6 @@ function displayNotification(message) {
   });
   notification.appendChild(proceedButton);
 
-  // Lägg till notifikationen i containern
   gameContainer.appendChild(notification);
 }
 

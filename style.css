@@ -34,6 +34,8 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   font-family: var(--font-family);
+  height: 100vh;
+  justify-items: center;
 }
 
 h1 {
