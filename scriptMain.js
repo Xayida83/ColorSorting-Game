@@ -15,6 +15,9 @@ let currentDraggedElement;
 let completedStacks = 0;
 let countedStacks = new Set();
 
+const restartBtn = document.getElementById('restart-btn');
+
+restartBtn.addEventListener("click", resetGame);
 
 // Uppdatera innehållet i <h1>-elementet
 document.getElementById('game-title').textContent = gameTitle;
@@ -359,10 +362,10 @@ function resetGame() {
   countedStacks.clear();
   updateMoveCount();
   updatePoints();
+  restartBtn.style.display = 'block';
   renderGame(); 
 }
 
-document.getElementById("restart-btn").addEventListener("click", resetGame);
 
 //**__________Check Win Condition__________ */
 function checkWinCondition() {
@@ -468,9 +471,7 @@ function updatePoints() {
 
 
 //*'__________Display Notification__________'	
-function displayNotification(message) {
-  var restartBtn = document.getElementById('restart-btn');
-  
+function displayNotification(message) {  
   if (restartBtn) {
       restartBtn.style.display = 'none';
   }
