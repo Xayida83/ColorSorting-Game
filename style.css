@@ -1,6 +1,7 @@
 :root {
   /* Background */
   --background-image: url("assets/background.webp");
+  --body-view-height: 112vh;
 
   /* Colors */
   --primary-color: #e91e63; /* Main theme color */
@@ -51,7 +52,7 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   font-family: var(--font-family);
-  height: 100vh;
+  height: var(--body-view-height);
   justify-items: center;
 }
 
