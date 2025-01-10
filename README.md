@@ -63,4 +63,43 @@ The configuration can be customized to adjust the gameplay experience:
 - Implement an "undo" function to revert the last move.
 - Allow players to select different themes or color schemes.
 
+## CSS
+These variables are used to easily modify the appearance throughout the document. They are defined in :root and can be adjusted to change colors, backgrounds, typography, and more.
+
+### Background
+- --background-image: Change the URL of the background image.
+- --body-view-height: Adjust the height of the body (e.g., 112vh or 100%).
+### Colors
+- --primary-color: Change the primary theme color.
+- --secondary-color: Change the secondary theme color.
+- --third-color: Change the additional accent color.
+- --font-color: Adjust the default text color.
+- --font-color-secondary: Change the secondary text color.
+- --locked-opacity: Adjust the opacity for locked elements.
+### Buttons
+- --restart-btn-bg-color: Background color for the restart button.
+- --restart-btn-border-color: Border color for the restart button.
+- --button-bg-color: Background color for other buttons.
+### Typography
+- --font-size: Adjust the default font size.
+- --font-family: Change the font family.
+- --font-weight: Adjust the font weight (default: 700).
+### Borders and Shadows
+- --border-radius: Adjust the corner radius of elements.
+- --border-width: Change the width of borders.
+- --shadow: Set the shadow effect for elements.
+### Stacks
+- --stack-background-img: Background image for stacks.
+- --stack-width: Set the width of each stack.
+- --stack-filter: Apply a filter to the stacks.
+- --stack-gap: Define the spacing between items in the stack.
+### Items
+- --item-width: Adjust the width of each item.
+- --item-border-color: Change the border color of items.
+- --item-border-width: Set the border width for items.
+- --item-border-style: Adjust the border style (solid, dotted, etc.).
+- --transform: Define transformation effects (e.g., scale(1.1)).
+### Spacing
+- --padding: Set the standard padding for elements.
+
 
