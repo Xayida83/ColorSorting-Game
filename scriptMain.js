@@ -49,7 +49,7 @@ async function renderGame() {
       const response = await fetch("items.json");
       const items = await response.json();
 
-      // Limit to selected number of colors
+      // Limit to selected number of items
       const selectedItems = items.slice(0, numberOfItems);
 
       const stacks = generateShuffledStacks(selectedItems);
@@ -64,7 +64,7 @@ async function renderGame() {
               const itemImg = document.createElement("img");
               itemImg.src = item.image;
               itemImg.alt = item.name;
-              itemImg.classList.add("item-piece", `color-${item.name}`);
+              itemImg.classList.add("item-piece", `${item.name}`);
               itemImg.dataset.name = item.name; // Lägg till namn för validering
               itemImg.dataset.index = index; // Spara index i stacken
               stackDiv.appendChild(itemImg);
@@ -242,8 +242,6 @@ function enableDragAndDrop() {
   document.addEventListener('drop', function (e) {
     const targetStack = e.target.closest('.stack');
     const draggedItem = document.querySelector('.dragging');
-
-    console.log("Drop event triggered", { targetStack, draggedItem });
   
     if (targetStack && draggedItem) {
         moveItemToStack(draggedItem, targetStack);
@@ -294,6 +292,11 @@ function updateDraggableStates() {
       const items = stack.querySelectorAll(".item-piece");
       items.forEach((item, index) => {
           item.draggable = index === 0; // Only first item in stack is draggable
+          if (item.draggable) {
+            item.classList.add("moveable");
+          } else {
+            item.classList.remove("moveable");
+          }          
       });
   });
 }

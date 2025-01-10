@@ -127,7 +127,7 @@ h1 {
   z-index: 10;
   margin: 2px 0;
   object-fit: contain;
-  cursor: grab;
+  /* cursor: grab; */
 }
 .color-Red { background-color: red; }
 .color-Blue { background-color: blue; }
@@ -141,6 +141,9 @@ h1 {
 .item-piece.dragging {
   opacity: 0.5;
   cursor: grabbing;
+}
+.moveable {
+  cursor: grab;
 }
 
 .stack.locked {
