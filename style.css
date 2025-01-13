@@ -145,6 +145,7 @@ h1 {
 .item-piece.dragging {
   opacity: 0.5;
   cursor: grabbing;
+  z-index: 4000;
 }
 .moveable {
   cursor: grab;

@@ -50,7 +50,7 @@ async function renderGame() {
   const gameContainer = document.getElementById("game-container");
 
     // Check if we are on a touch device
-  const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  // const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
   try {
        // Limit to selected number of items
@@ -59,32 +59,33 @@ async function renderGame() {
       const stacks = generateShuffledStacks(selectedItems);
 
       // Render stacks
-      stacks.forEach((stack, stackIndex) => {
-          const stackDiv = document.createElement("div");
-          stackDiv.className = "stack";
-          stackDiv.dataset.stackId = stackIndex; // Identifiera stacken
+      // stacks.forEach((stack, stackIndex) => {
+      //     const stackDiv = document.createElement("div");
+      //     stackDiv.className = "stack";
+      //     stackDiv.dataset.stackId = stackIndex; // Identifiera stacken
 
-          stack.forEach((item, index) => {
-              const itemImg = document.createElement("img");
-              itemImg.src = item.image;
-              itemImg.alt = item.name;
-              itemImg.classList.add("item-piece", `${item.name}`);
-              itemImg.dataset.name = item.name; // Lägg till namn för validering
-              itemImg.dataset.index = index; // Spara index i stacken
-              stackDiv.appendChild(itemImg);
+      //     stack.forEach((item, index) => {
+      //         const itemImg = document.createElement("img");
+      //         itemImg.src = item.image;
+      //         itemImg.alt = item.name;
+      //         itemImg.classList.add("item-piece", `${item.name}`);
+      //         itemImg.dataset.name = item.name; // Lägg till namn för validering
+      //         itemImg.dataset.index = index; // Spara index i stacken
+      //         stackDiv.appendChild(itemImg);
 
-            // Lägg till händelser baserat på enhet
-            if (isTouchDevice) {
-              addTouchEvents(itemImg);
-            } else {
-              addDragEvents(itemImg);
-            }
-          });
+      //       // Lägg till händelser baserat på enhet
+      //       if (isTouchDevice) {
+      //         addTouchEvents(itemImg);
+      //       } else {
+      //         addDragEvents(itemImg);
+      //       }
+      //     });
 
-          gameContainer.appendChild(stackDiv);
-          // Lägg till drop-event till stacken
-          addDropEvents(stackDiv);
-      });
+      //     gameContainer.appendChild(stackDiv);
+      //     // Lägg till drop-event till stacken
+      //     addDropEvents(stackDiv);
+      // });
+      renderStacks(stacks);
       // Add two empty stacks
       for (let i = 0; i < 2; i++) {
           const emptySlot = document.createElement("div");
@@ -95,13 +96,48 @@ async function renderGame() {
           addDropEvents(emptySlot); 
       }
   } catch (error) {
-      console.error("Failed to load JSON data:", error);
+      console.error("Error rendering game:", error);
       displayNotification("Failed to load game data. Please try again later.");
   }
 
   await enableClickToMove(); 
   await enableDragAndDrop(); 
   updateDraggableStates();   
+}
+
+function renderStacks(stacks) {
+  const gameContainer = document.getElementById("game-container");
+   // Check if we are on a touch device
+   const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+
+  stacks.forEach((stack, stackIndex) => {
+    const stackDiv = document.createElement("div");
+    stackDiv.className = "stack";
+    stackDiv.dataset.stackId = stackIndex; // Identifiera stacken
+
+    stack.forEach((item, index) => {
+      renderItem(item, index, stackDiv, isTouchDevice);
+    });
+
+    gameContainer.appendChild(stackDiv);
+  });
+}
+function renderItem(item, index, stackDiv, isTouchDevice) {
+  const itemImg = document.createElement("img");
+  itemImg.src = item.image;
+  itemImg.alt = item.name;
+  itemImg.classList.add("item-piece", `${item.name}`);
+  itemImg.dataset.name = item.name; // Lägg till namn för validering
+  itemImg.dataset.index = index; // Spara index i stacken
+  stackDiv.appendChild(itemImg);
+
+  // Lägg till händelser baserat på enhet
+  if (isTouchDevice) {
+    addTouchEvents(itemImg);
+  } else {
+    addDragEvents(itemImg);
+  }
 }
 
 // Generates shuffled stacks
