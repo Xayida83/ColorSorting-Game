@@ -245,12 +245,22 @@ function enableDragAndDrop() {
   });
 
   document.addEventListener('drop', function (e) {
-    const targetStack = e.target.closest('.stack');
-    const draggedItem = document.querySelector('.dragging');
-  
+    const targetStack = e.target.closest('.stack'); // Stacken där item droppas
+    const draggedItem = document.querySelector('.dragging'); // Det dragna itemet
+    
     if (targetStack && draggedItem) {
+      const originStack = draggedItem.parentNode; // Ursprungliga stacken
+  
+      if (targetStack === originStack) {
+        // Släpptes tillbaka till samma stack, ignorera detta drag
+        console.log("Move ignored.");
+      } else {
+        // Validera flytt och räkna draget
         moveItemToStack(draggedItem, targetStack);
-        draggedItem.classList.remove('dragging');
+        updateMoveCount(); // Uppdatera antalet drag
+      }
+  
+      draggedItem.classList.remove('dragging');
     }
   });
 
