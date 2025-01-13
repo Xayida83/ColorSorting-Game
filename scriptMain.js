@@ -319,6 +319,7 @@ function updateDraggableStates() {
 //**__________Touch Events__________ */
 function addTouchEvents(item) {
   let initialX = 0, initialY = 0;
+  let originStack = null; // För att hålla koll på ursprungsstacken
 
   item.addEventListener("touchstart", (e) => {
     const parentStack = item.parentNode;
@@ -331,6 +332,7 @@ function addTouchEvents(item) {
       const touch = e.touches[0];
       initialX = touch.clientX;
       initialY = touch.clientY;
+      originStack = parentStack; // Spara ursprungsstacken
 
       e.preventDefault();
     }
@@ -343,7 +345,7 @@ function addTouchEvents(item) {
     const deltaX = touch.clientX - initialX;
     const deltaY = touch.clientY - initialY;
 
-    // Use transform to move the element
+    // Använd transform för att flytta elementet
     currentDraggedElement.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
 
     e.preventDefault();
@@ -352,22 +354,30 @@ function addTouchEvents(item) {
   item.addEventListener("touchend", (e) => {
     if (!currentDraggedElement) return;
 
-    //Temporarily reset transform to get correct element
+    // Temporärt återställ transform för att få rätt element vid touch-slut
     currentDraggedElement.style.transform = "";
 
     const touch = e.changedTouches[0];
     const targetStack = document.elementFromPoint(touch.clientX, touch.clientY);
 
     if (targetStack && targetStack.classList.contains("stack")) {
+      if (targetStack === originStack) {
+        // Släpptes tillbaka till samma stack, ignorera detta drag
+        console.log("Move ignored.");
+      } else {
+        // Validera flytt och räkna draget
         moveItemToStack(currentDraggedElement, targetStack);
+        updateMoveCount(); // Uppdatera antal drag
+      }
     }
-    
+
     currentDraggedElement.classList.remove("dragging");
     currentDraggedElement.style.transform = "";
     currentDraggedElement = null;
-
+    originStack = null; // Återställ ursprungsstacken
   });
 }
+
 
 
 //**__________Reset Game__________ */
