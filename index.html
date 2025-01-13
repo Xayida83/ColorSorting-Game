@@ -13,11 +13,23 @@
     <div class="container">
       <!-- Div för att visa moves och/eller score -->
       <div id="status-container">
-      <!-- Statusuppdateringar -->
+        <div>
+          <p>Moves: </p>
+          <p class="count moves"></p>
+        </div>
+        <div>
+          <p>Score: </p>
+          <p class="count points"></p>
+        </div>
       </div>
     <!-- Div för spelet -->
       <div id="game-container">
       <!-- Spelet renderas här med JavaScript -->
+      </div>
+      <div id="notification" class="notification" style="display: none;">
+        <p id="notification-message"></p>
+        <button class="btn play-again" onclick="resetGame()">Play Again</button>
+        <button class="btn proceed" onclick="proceed()">Proceed</button>
       </div>
 
       <button id="restart-btn">Restart</button>

@@ -1,6 +1,6 @@
 const gameTitle = "Sorting game"; // Change for game title
 const numberOfItems = 4;// Adjust this to select number of items
-let startPoints = 200; // Adjust this to set starting score
+let startPoints = 500; // Adjust this to set starting score
 let stackPoints = 50; // Adjust this to set points for each completed stack
 let movePoints = 10; // Adjust this to set points for each move
 
@@ -32,17 +32,16 @@ restartBtn.addEventListener("click", resetGame);
 document.getElementById('game-title').textContent = gameTitle;
 
 function renderStatusContainer() {
-  const statusContainer = document.getElementById('status-container');
-  statusContainer.innerHTML = `
-    <div>
-      <p>Moves: </p>
-      <p class="count moves">${config.limitMoves ? `${moveCount}/${config.maxMoves}` : moveCount}</p>
-    </div>
-    <div>
-      <p>Score: </p>
-      <p class="count points">${startPoints}</p>
-    </div>
-  `;
+  const movesElement = document.querySelector('.count.moves');
+  const pointsElement = document.querySelector('.count.points');
+
+  if (movesElement) {
+    movesElement.textContent = config.limitMoves ? `${moveCount}/${config.maxMoves}` : moveCount;
+  }
+
+  if (pointsElement) {
+    pointsElement.textContent = startPoints;
+  }
 }
 
 async function renderGame() {
@@ -503,7 +502,7 @@ function updateMoveCount() {
 //*'__________Count Points___________'
 function updatePoints() {
   points = startPoints + (completedStacks * stackPoints) - (moveCount * movePoints);
-
+  
   // Visa poäng, men inte negativa
   const pointsToShow = points < 0 ? 0 : points;
 
@@ -516,42 +515,67 @@ function updatePoints() {
 
 
 //*'__________Display Notification__________'	
+// function displayNotification(message) {  
+//   if (restartBtn) {
+//       restartBtn.style.display = 'none';
+//   }
+
+//   const gameContainer = document.getElementById("game-container");
+
+//   gameContainer.innerHTML = "";
+
+//   const notification = document.createElement("div");
+//   notification.className = "notification";
+
+//   const messageElement = document.createElement("p");
+//   messageElement.textContent = message;
+//   notification.appendChild(messageElement);
+
+//   const playAgainButton = document.createElement("button");
+//   playAgainButton.textContent = "Play Again";
+//   playAgainButton.className = "btn play-again";
+//   playAgainButton.addEventListener("click", () => {
+//     resetGame(); 
+//   });
+//   notification.appendChild(playAgainButton);
+
+//   const proceedButton = document.createElement("button");
+//   proceedButton.textContent = "Proceed";
+//   proceedButton.className = "btn proceed";
+//   proceedButton.addEventListener("click", () => {
+//     // Lägg till din logik för att gå vidare
+//     alert("Funktion för att gå vidare implementeras här!");
+//   });
+//   notification.appendChild(proceedButton);
+
+//   gameContainer.appendChild(notification);
+// }
+
 function displayNotification(message) {  
   if (restartBtn) {
       restartBtn.style.display = 'none';
   }
 
   const gameContainer = document.getElementById("game-container");
-
   gameContainer.innerHTML = "";
 
-  const notification = document.createElement("div");
-  notification.className = "notification";
+  const notification = document.getElementById("notification");
+  const messageElement = document.getElementById("notification-message");
 
-  const messageElement = document.createElement("p");
-  messageElement.textContent = message;
-  notification.appendChild(messageElement);
+  if (messageElement) {
+    messageElement.textContent = message;
+  }
 
-  const playAgainButton = document.createElement("button");
-  playAgainButton.textContent = "Play Again";
-  playAgainButton.className = "btn play-again";
-  playAgainButton.addEventListener("click", () => {
-    resetGame(); 
-  });
-  notification.appendChild(playAgainButton);
-
-  const proceedButton = document.createElement("button");
-  proceedButton.textContent = "Proceed";
-  proceedButton.className = "btn proceed";
-  proceedButton.addEventListener("click", () => {
-    // Lägg till din logik för att gå vidare
-    alert("Funktion för att gå vidare implementeras här!");
-  });
-  notification.appendChild(proceedButton);
-
-  gameContainer.appendChild(notification);
+  if (notification) {
+    notification.style.display = 'block';
+    gameContainer.style.display = 'none';
+  }
 }
 
+function proceed() {
+  // Lägg till din logik för att gå vidare
+  alert("Funktion för att gå vidare implementeras här!");
+}
 
 
 renderGame();
