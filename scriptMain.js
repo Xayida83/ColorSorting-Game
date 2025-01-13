@@ -15,6 +15,15 @@ let currentDraggedElement;
 let completedStacks = 0;
 let countedStacks = new Set();
 
+const items = [
+  { "name": "HotDog", "image": "assets/hotDog.png" },
+  { "name": "ChocolateBar", "image": "assets/chockolateBar.png" },
+  { "name": "IceCream", "image": "assets/iceCream.png" },
+  { "name": "SodaCan", "image": "assets/sodaCan.png" },
+  { "name": "Red", "image": "red.png" },
+  { "name": "Blue", "image": "blue.png" }
+];
+
 const restartBtn = document.getElementById('restart-btn');
 
 restartBtn.addEventListener("click", resetGame);
@@ -45,11 +54,7 @@ async function renderGame() {
   const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
   try {
-      //* Hämta JSON-data
-      const response = await fetch("items.json");
-      const items = await response.json();
-
-      // Limit to selected number of items
+       // Limit to selected number of items
       const selectedItems = items.slice(0, numberOfItems);
 
       const stacks = generateShuffledStacks(selectedItems);
