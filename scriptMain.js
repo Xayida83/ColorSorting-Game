@@ -407,6 +407,17 @@ function resetGame() {
   updateMoveCount();
   updatePoints();
   restartBtn.style.display = 'block';
+    // Dölj notifikationen
+    const notification = document.getElementById("notification");
+    if (notification) {
+      notification.style.display = 'none';
+    }
+  
+    // Visa spelcontainern
+    if (gameContainer) {
+      gameContainer.style.display = 'flex'; // Eller 'block', beroende på din layout
+    }
+  
   renderGame(); 
 }
 
