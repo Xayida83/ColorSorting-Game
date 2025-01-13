@@ -29,7 +29,7 @@
   /* Stacks */
   --stack-background-img: url("assets/shelfs.png"); /* Background image for stacks */
   --stack-width: 5rem; /* Width of each stack */
-  --stack-filter: drop-shadow(5px 6px 2px grey); /* Filter applied to stacks */
+  --stack-filter: drop-shadow(0px 0px 10px rgba(0,0,0,1)); /* Filter applied to stacks */
   --stack-gap: 6px; /* Gap between items */
 
   /* Items */
@@ -37,7 +37,7 @@
   --item-border-color: var(--primary-color); /* Border color for items */
   --item-border-width: 2px; /* Border width for items */
   --item-border-style: solid; /* Border style for items */
-  --transform: scale(1.1);
+  --transform: scale(1.3);
 
   /* Padding and Spacing */
   --padding: 10px; /* Default padding */
@@ -54,6 +54,7 @@ body {
   font-family: var(--font-family);
   height: var(--body-view-height);
   justify-items: center;
+  overflow: visible;
 }
 
 h1 {
@@ -130,14 +131,13 @@ h1 {
   z-index: 10;
   margin: 2px 0;
   object-fit: contain;
-  /* cursor: grab; */
 }
 .color-Red { background-color: red; }
 .color-Blue { background-color: blue; }
 
 .item-piece.dragging,
 .selected-item {
-  border: var(--item-border-width) var(--item-border-style) var(--item-border-color);
+  /* border: var(--item-border-width) var(--item-border-style) var(--item-border-color); */
   transform: var(--transform);
   z-index: 2000;
 }

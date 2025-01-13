@@ -108,48 +108,65 @@ async function renderGame() {
 // Generates shuffled stacks
 function generateShuffledStacks(items) {
   const allItems = [];
+  
+  // Duplicera varje item fyra gånger
   items.forEach(item => {
-      for (let i = 0; i < 4; i++) {
-          allItems.push(item);
-      }
+    for (let i = 0; i < 4; i++) {
+      allItems.push(item);
+    }
   });
 
-  //Mix items
+  // Blanda alla items
   allItems.sort(() => Math.random() - 0.5);
 
   const stacks = [];
   const columnCount = Math.ceil(allItems.length / 4);
 
+  // Skapa tomma stackar
   for (let i = 0; i < columnCount; i++) {
     stacks.push([]);
   }
-  // look for a column that does not already have 4 of the same item
+
+  // Fyll stackarna med regler för att förhindra fyra lika i en stack
   while (allItems.length > 0) {
     const item = allItems.pop();
-    // Looke for a column that does not already have 4 of the same item
     let placed = false;
-    for (let i = 0; i < columnCount; i++) {
-        const currentStack = stacks[i];
-        const itemCount = currentStack.filter(stackItem => stackItem === item).length;
 
-        if (itemCount < 3 && currentStack.length < 4) {
-            currentStack.push(item);
-            placed = true;
-            break;
-        }
+    // Försök att placera i en stack som inte redan har fyra av samma item
+    for (let i = 0; i < columnCount; i++) {
+      const currentStack = stacks[i];
+      const itemCount = currentStack.filter(stackItem => stackItem === item).length;
+
+      if (itemCount < 3 && currentStack.length < 4) {
+        currentStack.push(item);
+        placed = true;
+        break;
+      }
     }
-    // If no column meets the requirements, place in first available
+
+    // Om ingen stack passar, placera slumpmässigt men håll reglerna
     if (!placed) {
-        for (let i = 0; i < columnCount; i++) {
-            if (stacks[i].length < 4) {
-                stacks[i].push(item);
-                break;
-            }
-        }
+      let randomIndex = Math.floor(Math.random() * columnCount);
+      while (stacks[randomIndex].length >= 4) {
+        randomIndex = Math.floor(Math.random() * columnCount);
+      }
+      stacks[randomIndex].push(item);
     }
   }
+
+  // Säkerställ att inga stackar har fyra likadana items
+  for (let i = 0; i < stacks.length; i++) {
+    const currentStack = stacks[i];
+    const uniqueItems = [...new Set(currentStack)];
+
+    if (uniqueItems.length === 1 && currentStack.length === 4) {
+      console.error(`Error: Stack ${i} has four identical items:`, currentStack);
+    }
+  }
+
   return stacks;
 }
+
 
 
 
