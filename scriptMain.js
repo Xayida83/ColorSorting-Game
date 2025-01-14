@@ -197,24 +197,26 @@ function generateShuffledStacks(items) {
 function moveItemToStack(item, targetStack) {
   if (!item || !targetStack) return;
 
+  const originStack = document.querySelector(`[data-stack-id="${item.dataset.originStackId}"]`);
+
+  // Kontrollera om målstack är samma som ursprungsstack
+  if (originStack === targetStack) {
+    console.log("Move ignored: Same stack.");
+    // Flytta tillbaka objektet till högst upp i ursprungsstacken
+    targetStack.insertBefore(item, targetStack.firstChild);
+    updateStackIndexes(targetStack);
+    return; // Ignorera flytten
+  }
+
   const itemsInTarget = targetStack.querySelectorAll('.item-piece');
 
   // Kontrollera om flytten är giltig
   if (isValidMove(targetStack, item, itemsInTarget)) {
-    const originStack = document.querySelector(`[data-stack-id="${item.dataset.originStackId}"]`);
-
-    // Kontrollera om målstack är samma som ursprungsstack
-    if (originStack === targetStack) {
-      console.log("Move ignored: Same stack.");
-      return; // Flytten ignoreras om det är samma stack
-    }
-
     // Flytta objektet till toppen av målstacken
     targetStack.insertBefore(item, targetStack.firstChild);
 
-    // Uppdatera indexen i målstacken
+    // Uppdatera indexen i målstacken och ursprungsstacken
     updateStackIndexes(targetStack);
-    // Uppdatera indexen i ursprungsstacken
     updateStackIndexes(originStack);
 
     moveCount++;
@@ -227,13 +229,13 @@ function moveItemToStack(item, targetStack) {
     updateDraggableStates();
   } else {
     // Om flytten inte är giltig, återställ till ursprungsstacken
-    const originStack = document.querySelector(`[data-stack-id="${item.dataset.originStackId}"]`);
     if (originStack) {
-      originStack.appendChild(item);
-      updateStackIndexes(originStack); // Uppdatera indexen i ursprungsstacken
+      originStack.insertBefore(item, originStack.firstChild);
+      updateStackIndexes(originStack);
     }
   }
 }
+
 
 
 function updateStackIndexes(stack) {
@@ -243,29 +245,26 @@ function updateStackIndexes(stack) {
   });
 }
 
+
 //*'___________Control if move is valid___________'
 function isValidMove(targetStack, draggedElement, itemsInTarget) {
   const maxItems = 4;
 
   if (itemsInTarget.length >= maxItems) {
-      //* Stack is full
-      return false;
+    //* Stack is full
+    return false;
   }
 
   if (itemsInTarget.length === 0) {
-      //* Empty stack always valid
-      return true;
+    //* Empty stack always valid
+    return true;
   }
 
-  // Check if the first item in the target stack has the same color
+  // Kontrollera om den första item i målstacken har samma namn
   const firstItemName = itemsInTarget[0].dataset.name;
-  if (firstItemName === draggedElement.dataset.name) {
-      return true;
-  } else {
-      //*Wrong color 
-      return false;
-  }
+  return firstItemName === draggedElement.dataset.name;
 }
+
 
 //**___________Move object on click___________'
 function enableClickToMove() {
@@ -456,7 +455,7 @@ function addTouchEvents(item) {
       // Om målstack är samma som ursprungsstack, ignorera flytten
       if (targetStack === originStack) {
         console.log("Move ignored: Same stack.");
-        originStack.appendChild(currentDraggedElement);
+        originStack.insertBefore(currentDraggedElement, originStack.firstChild);
         updateStackIndexes(originStack);
       } else {
         moveItemToStack(currentDraggedElement, targetStack);
@@ -465,7 +464,7 @@ function addTouchEvents(item) {
       // Återställ till ursprungsstack om ingen målstack hittades
       const originStack = document.querySelector(`[data-stack-id="${currentDraggedElement.dataset.originStackId}"]`);
       if (originStack) {
-        originStack.appendChild(currentDraggedElement);
+        originStack.insertBefore(currentDraggedElement, originStack.firstChild);
         updateStackIndexes(originStack);
       }
     }
@@ -479,7 +478,8 @@ function addTouchEvents(item) {
   
     currentDraggedElement = null;
     originStack = null;
-  });  
+  });
+    
 }
 
 
