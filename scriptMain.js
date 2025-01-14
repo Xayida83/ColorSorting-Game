@@ -99,8 +99,8 @@ async function renderGame() {
       displayNotification("Failed to load game data. Please try again later.");
   }
 
-  await enableClickToMove(); 
-  await enableDragAndDrop(); 
+  enableClickToMove(); 
+  enableDragAndDrop();
   updateDraggableStates();   
 }
 
