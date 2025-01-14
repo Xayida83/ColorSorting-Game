@@ -46,64 +46,46 @@ function renderStatusContainer() {
 
 async function renderGame() {
   renderStatusContainer();
-  
+
   const gameContainer = document.getElementById("game-container");
 
-    // Check if we are on a touch device
-  // const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
   try {
-       // Limit to selected number of items
-      const selectedItems = items.slice(0, numberOfItems);
+    const selectedItems = items.slice(0, numberOfItems);
+    const stacks = generateShuffledStacks(selectedItems);
 
-      const stacks = generateShuffledStacks(selectedItems);
+    renderStacks(stacks);
 
-      // Render stacks
-      // stacks.forEach((stack, stackIndex) => {
-      //     const stackDiv = document.createElement("div");
-      //     stackDiv.className = "stack";
-      //     stackDiv.dataset.stackId = stackIndex; // Identifiera stacken
+    // Lägg till två tomma stackar
+    for (let i = 0; i < 2; i++) {
+      const emptySlot = document.createElement("div");
+      emptySlot.className = "stack";
+      emptySlot.dataset.stackId = stacks.length + i;
+      gameContainer.appendChild(emptySlot);
+      addDropEvents(emptySlot);
+    }
 
-      //     stack.forEach((item, index) => {
-      //         const itemImg = document.createElement("img");
-      //         itemImg.src = item.image;
-      //         itemImg.alt = item.name;
-      //         itemImg.classList.add("item-piece", `${item.name}`);
-      //         itemImg.dataset.name = item.name; // Lägg till namn för validering
-      //         itemImg.dataset.index = index; // Spara index i stacken
-      //         stackDiv.appendChild(itemImg);
-
-      //       // Lägg till händelser baserat på enhet
-      //       if (isTouchDevice) {
-      //         addTouchEvents(itemImg);
-      //       } else {
-      //         addDragEvents(itemImg);
-      //       }
-      //     });
-
-      //     gameContainer.appendChild(stackDiv);
-      //     // Lägg till drop-event till stacken
-      //     addDropEvents(stackDiv);
-      // });
-      renderStacks(stacks);
-      // Add two empty stacks
-      for (let i = 0; i < 2; i++) {
-          const emptySlot = document.createElement("div");
-          emptySlot.className = "stack";
-          emptySlot.dataset.stackId = stacks.length + i; 
-
-          gameContainer.appendChild(emptySlot);
-          addDropEvents(emptySlot); 
+    // Lägg till touch- eller drag-händelser
+    const allItems = document.querySelectorAll(".item-piece");
+    allItems.forEach(item => {
+      if (isTouchDevice) {
+        addTouchEvents(item);
+      } else {
+        addDragEvents(item);
       }
+    });
+
   } catch (error) {
-      console.error("Error rendering game:", error);
-      displayNotification("Failed to load game data. Please try again later.");
+    console.error("Error rendering game:", error);
+    displayNotification("Failed to load game data. Please try again later.");
   }
 
-  await enableClickToMove(); 
-  await enableDragAndDrop(); 
-  updateDraggableStates();   
+  enableClickToMove();
+  enableDragAndDrop();
+  updateDraggableStates();
 }
+
 
 function renderStacks(stacks) {
   const gameContainer = document.getElementById("game-container");
@@ -376,8 +358,10 @@ function updateDraggableStates() {
 
 //**__________Touch Events__________ */
 function addTouchEvents(item) {
-  let initialX = 0, initialY = 0;
-  let originStack = null; // För att hålla koll på ursprungsstacken
+  let initialX = 0, initialY = 0; // Ursprunglig touch-koordinat
+  let currentX = 0, currentY = 0; // Aktuell position
+  let offsetX = 0, offsetY = 0; // Justering för elementets position
+  let originStack = null; // Ursprunglig stack
 
   item.addEventListener("touchstart", (e) => {
     const parentStack = item.parentNode;
@@ -385,12 +369,29 @@ function addTouchEvents(item) {
 
     if (item === firstChild) {
       currentDraggedElement = item;
-      item.classList.add("dragging");
+      originStack = parentStack;
 
+      // Beräkna position för att justera drag
+      const rect = item.getBoundingClientRect();
       const touch = e.touches[0];
+
+      offsetX = touch.clientX - rect.left;
+      offsetY = touch.clientY - rect.top;
+
+      // Flytta elementet till body
+      document.body.appendChild(currentDraggedElement);
+
+      currentDraggedElement.style.position = "fixed";
+      currentDraggedElement.style.top = `${rect.top}px`;
+      currentDraggedElement.style.left = `${rect.left}px`;
+      // currentDraggedElement.style.width = `${rect.width}px`;
+      // currentDraggedElement.style.height = `${rect.height}px`;
+      currentDraggedElement.classList.add("dragging");
+
       initialX = touch.clientX;
       initialY = touch.clientY;
-      originStack = parentStack; 
+      currentX = rect.left;
+      currentY = rect.top;
 
       e.preventDefault();
     }
@@ -403,9 +404,17 @@ function addTouchEvents(item) {
     const deltaX = touch.clientX - initialX;
     const deltaY = touch.clientY - initialY;
 
-    // Använd transform för att flytta elementet
-    currentDraggedElement.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(1.3)`;
-    currentDraggedElement.style.zIndex = 1000;
+    // Uppdatera absolut position
+    currentX += deltaX;
+    currentY += deltaY;
+
+    currentDraggedElement.style.left = `${currentX}px`;
+    currentDraggedElement.style.top = `${currentY}px`;
+    currentDraggedElement.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(1.3)`;
+
+    // Uppdatera startkoordinater för nästa dragning
+    initialX = touch.clientX;
+    initialY = touch.clientY;
 
     e.preventDefault();
   });
@@ -413,29 +422,36 @@ function addTouchEvents(item) {
   item.addEventListener("touchend", (e) => {
     if (!currentDraggedElement) return;
 
-    // Temporärt återställ transform för att få rätt element vid touch-slut
-    currentDraggedElement.style.transform = "";
-
     const touch = e.changedTouches[0];
-    const targetStack = document.elementFromPoint(touch.clientX, touch.clientY);
+    const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
 
-    if (targetStack && targetStack.classList.contains("stack")) {
-      if (targetStack === originStack) {
-        // Släpptes tillbaka till samma stack, ignorera detta drag
-        console.log("Move ignored.");
-      } else {
-        // Validera flytt och räkna draget
-        moveItemToStack(currentDraggedElement, targetStack);
-        updateMoveCount(); // Uppdatera antal drag
-      }
+    // Hitta målstack
+    const targetStack = targetElement.closest(".stack");
+
+    if (targetStack && targetStack !== originStack) {
+      // Validera och flytta till målstacken
+      moveItemToStack(currentDraggedElement, targetStack);
+    } else {
+      // Om inte giltig stack, återställ till ursprunglig stack
+      originStack.appendChild(currentDraggedElement);
     }
 
-    currentDraggedElement.classList.remove("dragging");
+    // Återställ stilar och variabler
+    currentDraggedElement.style.position = "";
+    currentDraggedElement.style.top = "";
+    currentDraggedElement.style.left = "";
+    // currentDraggedElement.style.width = "";
+    // currentDraggedElement.style.height = "";
     currentDraggedElement.style.transform = "";
+    currentDraggedElement.classList.remove("dragging");
+
     currentDraggedElement = null;
     originStack = null; // Återställ ursprungsstacken
   });
 }
+
+
+
 
 
 

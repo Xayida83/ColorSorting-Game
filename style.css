@@ -123,6 +123,7 @@ h1 {
   box-shadow: 4px 6px 5px 0px rgba(171,164,171,0.34); */
   cursor: pointer;
   z-index: 0;
+  overflow: visible;
 }
 
 .item-piece {
@@ -147,10 +148,17 @@ h1 {
   transform: var(--transform);
   z-index: 2000;
   cursor: grabbing;
+  overflow: visible;
 }
 .item-piece.dragging {
-  opacity: 0.5;
+  /* position: absolute !important;
+  top: 0;
+  left: 0; */
+  z-index: 9999 !important;
+  opacity: 0.8;
+  pointer-events: none;
 }
+
 .moveable {
   cursor: grab;
 }
