@@ -5,31 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Color Sorting Game</title>
     <link rel="stylesheet" href="style.css">
-    <script src="scriptOne.js" defer></script>
-    <!-- <script src="scriptTest.js" defer></script> -->
-      
-    <!-- <script src="script.js" defer></script> -->
+    <script src="scriptMain.js" defer></script>
 
 </head>
 <body>
-    <h1>Color Sorting Game</h1>
-
+    <h1 id="game-title">Sorting Game</h1>
+    <div class="container">
+      <!-- Div för att visa moves och/eller score -->
+      <div id="status-container">
+        <div>
+          <p>Moves: </p>
+          <p class="count moves"></p>
+        </div>
+        <div>
+          <p>Score: </p>
+          <p class="count points"></p>
+        </div>
+      </div>
     <!-- Div för spelet -->
-    <div id="game-container">
-    <!-- Spelet renderas här med JavaScript -->
-    </div>
+      <div id="game-container">
+      <!-- Spelet renderas här med JavaScript -->
+      </div>
+      <div id="notification" class="notification" style="display: none;">
+        <p id="notification-message"></p>
+        <button class="btn play-again" onclick="resetGame()">Play Again</button>
+        <button class="btn proceed" onclick="proceed()">Proceed</button>
+      </div>
 
-  <!-- Div för att visa moves och/eller score -->
-    <div id="status-container">
-      <!-- Statusuppdateringar -->
-      <p class="moves">Moves: 0</p>
-      <p class="score">Score: 0</p>
+      <button id="restart-btn">Restart</button>
     </div>
-
     
-
-    <!-- <script src="script.js"></script> -->
-    <!-- <script src="scriptTest.js"></script> -->
-
 </body>
 </html>
