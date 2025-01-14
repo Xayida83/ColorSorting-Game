@@ -7,7 +7,7 @@ let movePoints = 10; // Adjust this to set points for each move
 // Configuration options
 const config = {
   limitMoves: true, // Customer can toggle this (true/false)
-  maxMoves: 3 // Default maximum moves
+  maxMoves: 15 // Default maximum moves
 };
 
 let moveCount = 0;
@@ -229,12 +229,12 @@ function moveItemToStack(item, targetStack) {
 
     moveCount++;
     updateMoveCount();
-    updatePoints();
-
-    updateDraggableStates(); // Uppdatera draggable-attributen  
-    // Sheck game status
+    
+    //Check game status
     checkWinCondition();
     checkLoseCondition();
+    updatePoints();
+    updateDraggableStates(); 
   } 
 }
 
@@ -545,24 +545,11 @@ function checkLoseCondition() {
   }
 }
 
-// // Funktion för att inaktivera alla dragbara objekt vid förlust
-// function disableGameInteractions() {
-//   const allItems = document.querySelectorAll('.item-piece');
-//   allItems.forEach(item => {
-//     item.setAttribute('draggable', 'false');
-//   });
-
-//   const stacks = document.querySelectorAll('.stack');
-//   stacks.forEach(stack => {
-//     stack.classList.add('disabled');
-//   });
-// }
-
 //**________Count Moves_________ */
 function updateMoveCount() {
   const movesElement = document.querySelector('.moves');
   if (movesElement) {
-    movesElement.textContent = `${moveCount}`;
+    movesElement.textContent = config.limitMoves ? `${moveCount}/${config.maxMoves}` : moveCount;
   }
 }
 
@@ -582,19 +569,67 @@ function updatePoints() {
 
 
 //*'__________Display Notification__________'	
-function displayNotification(message) {
-  const notification = document.createElement("div");
-  notification.className = "notification";
-  notification.textContent = message;
+// function displayNotification(message) {  
+//   if (restartBtn) {
+//       restartBtn.style.display = 'none';
+//   }
 
-  document.body.appendChild(notification);
+//   const gameContainer = document.getElementById("game-container");
 
-  // Ta bort meddelandet efter 5 sekunder
-  setTimeout(() => {
-    notification.remove();
-  }, 10000);
+//   gameContainer.innerHTML = "";
+
+//   const notification = document.createElement("div");
+//   notification.className = "notification";
+
+//   const messageElement = document.createElement("p");
+//   messageElement.textContent = message;
+//   notification.appendChild(messageElement);
+
+//   const playAgainButton = document.createElement("button");
+//   playAgainButton.textContent = "Play Again";
+//   playAgainButton.className = "btn play-again";
+//   playAgainButton.addEventListener("click", () => {
+//     resetGame(); 
+//   });
+//   notification.appendChild(playAgainButton);
+
+//   const proceedButton = document.createElement("button");
+//   proceedButton.textContent = "Proceed";
+//   proceedButton.className = "btn proceed";
+//   proceedButton.addEventListener("click", () => {
+//     // Lägg till din logik för att gå vidare
+//     alert("Funktion för att gå vidare implementeras här!");
+//   });
+//   notification.appendChild(proceedButton);
+
+//   gameContainer.appendChild(notification);
+// }
+
+function displayNotification(message) {  
+  if (restartBtn) {
+      restartBtn.style.display = 'none';
+  }
+
+  const gameContainer = document.getElementById("game-container");
+  gameContainer.innerHTML = "";
+
+  const notification = document.getElementById("notification");
+  const messageElement = document.getElementById("notification-message");
+
+  if (messageElement) {
+    messageElement.textContent = message;
+  }
+
+  if (notification) {
+    notification.style.display = 'block';
+    gameContainer.style.display = 'none';
+  }
 }
 
+function proceed() {
+  // Lägg till din logik för att gå vidare
+  alert("Funktion för att gå vidare implementeras här!");
+}
 
 
 renderGame();
