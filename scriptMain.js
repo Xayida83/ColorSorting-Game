@@ -199,25 +199,48 @@ function moveItemToStack(item, targetStack) {
 
   const itemsInTarget = targetStack.querySelectorAll('.item-piece');
 
-  // Check if move is valid
+  // Kontrollera om flytten är giltig
   if (isValidMove(targetStack, item, itemsInTarget)) {
-    const currentStack = item.parentNode;
-    // Move the item to the top of the stack
-    if (itemsInTarget.length > 0) {
-      targetStack.insertBefore(item, itemsInTarget[0]);
-    } else {
-      targetStack.appendChild(item);
+    const originStack = document.querySelector(`[data-stack-id="${item.dataset.originStackId}"]`);
+
+    // Kontrollera om målstack är samma som ursprungsstack
+    if (originStack === targetStack) {
+      console.log("Move ignored: Same stack.");
+      return; // Flytten ignoreras om det är samma stack
     }
+
+    // Flytta objektet till toppen av målstacken
+    targetStack.insertBefore(item, targetStack.firstChild);
+
+    // Uppdatera indexen i målstacken
+    updateStackIndexes(targetStack);
+    // Uppdatera indexen i ursprungsstacken
+    updateStackIndexes(originStack);
 
     moveCount++;
     updateMoveCount();
-    
-    //Check game status
+
+    // Kontrollera spelets status
     checkWinCondition();
     checkLoseCondition();
     updatePoints();
-    updateDraggableStates(); 
-  } 
+    updateDraggableStates();
+  } else {
+    // Om flytten inte är giltig, återställ till ursprungsstacken
+    const originStack = document.querySelector(`[data-stack-id="${item.dataset.originStackId}"]`);
+    if (originStack) {
+      originStack.appendChild(item);
+      updateStackIndexes(originStack); // Uppdatera indexen i ursprungsstacken
+    }
+  }
+}
+
+
+function updateStackIndexes(stack) {
+  const items = stack.querySelectorAll('.item-piece');
+  items.forEach((item, index) => {
+    item.dataset.index = index; // Uppdatera index
+  });
 }
 
 //*'___________Control if move is valid___________'
@@ -366,36 +389,35 @@ function addTouchEvents(item) {
   item.addEventListener("touchstart", (e) => {
     const parentStack = item.parentNode;
     const firstChild = parentStack.querySelector(".item-piece");
-
+  
     if (item === firstChild) {
       currentDraggedElement = item;
       originStack = parentStack;
-
-      // Beräkna position för att justera drag
+  
+      // Spara ursprungsstackens ID
+      item.dataset.originStackId = parentStack.dataset.stackId;
+  
       const rect = item.getBoundingClientRect();
       const touch = e.touches[0];
-
+  
       offsetX = touch.clientX - rect.left;
       offsetY = touch.clientY - rect.top;
-
+  
       // Flytta elementet till body
       document.body.appendChild(currentDraggedElement);
-
+  
       currentDraggedElement.style.position = "fixed";
       currentDraggedElement.style.top = `${rect.top}px`;
       currentDraggedElement.style.left = `${rect.left}px`;
-      // currentDraggedElement.style.width = `${rect.width}px`;
-      // currentDraggedElement.style.height = `${rect.height}px`;
       currentDraggedElement.classList.add("dragging");
-
+  
       initialX = touch.clientX;
       initialY = touch.clientY;
-      currentX = rect.left;
-      currentY = rect.top;
-
+  
       e.preventDefault();
     }
   });
+  
 
   item.addEventListener("touchmove", (e) => {
     if (!currentDraggedElement) return;
@@ -421,33 +443,43 @@ function addTouchEvents(item) {
 
   item.addEventListener("touchend", (e) => {
     if (!currentDraggedElement) return;
-
+  
     const touch = e.changedTouches[0];
     const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
-
+  
     // Hitta målstack
     const targetStack = targetElement.closest(".stack");
-
-    if (targetStack && targetStack !== originStack) {
-      // Validera och flytta till målstacken
-      moveItemToStack(currentDraggedElement, targetStack);
+  
+    if (targetStack) {
+      const originStack = document.querySelector(`[data-stack-id="${currentDraggedElement.dataset.originStackId}"]`);
+  
+      // Om målstack är samma som ursprungsstack, ignorera flytten
+      if (targetStack === originStack) {
+        console.log("Move ignored: Same stack.");
+        originStack.appendChild(currentDraggedElement);
+        updateStackIndexes(originStack);
+      } else {
+        moveItemToStack(currentDraggedElement, targetStack);
+      }
     } else {
-      // Om inte giltig stack, återställ till ursprunglig stack
-      originStack.appendChild(currentDraggedElement);
+      // Återställ till ursprungsstack om ingen målstack hittades
+      const originStack = document.querySelector(`[data-stack-id="${currentDraggedElement.dataset.originStackId}"]`);
+      if (originStack) {
+        originStack.appendChild(currentDraggedElement);
+        updateStackIndexes(originStack);
+      }
     }
-
+  
     // Återställ stilar och variabler
     currentDraggedElement.style.position = "";
     currentDraggedElement.style.top = "";
     currentDraggedElement.style.left = "";
-    // currentDraggedElement.style.width = "";
-    // currentDraggedElement.style.height = "";
     currentDraggedElement.style.transform = "";
     currentDraggedElement.classList.remove("dragging");
-
+  
     currentDraggedElement = null;
-    originStack = null; // Återställ ursprungsstacken
-  });
+    originStack = null;
+  });  
 }
 
 
