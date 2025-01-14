@@ -30,7 +30,7 @@
   --stack-background-img: url("assets/shelfs.png"); /* Background image for stacks */
   --stack-width: 5rem; /* Width of each stack */
   --stack-filter: drop-shadow(0px 0px 10px rgba(0,0,0,1)); /* Filter applied to stacks */
-  --stack-gap: 6px; /* Gap between items */
+  --stack-gap: 2px; /* Gap between items */
 
   /* Items */
   --item-width: 3rem; /* Width of each item */
@@ -132,20 +132,24 @@ h1 {
   z-index: 10;
   margin: 2px 0;
   object-fit: contain;
+  overflow-clip-margin: content-box;
+  overflow: visible;
+}
+
+.item-img{
+  width: 100%;
 }
 .color-Red { background-color: red; }
 .color-Blue { background-color: blue; }
 
 .item-piece.dragging,
 .selected-item {
-  /* border: var(--item-border-width) var(--item-border-style) var(--item-border-color); */
   transform: var(--transform);
   z-index: 2000;
+  cursor: grabbing;
 }
 .item-piece.dragging {
   opacity: 0.5;
-  cursor: grabbing;
-  z-index: 4000;
 }
 .moveable {
   cursor: grab;

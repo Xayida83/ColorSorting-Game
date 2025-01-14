@@ -124,19 +124,25 @@ function renderStacks(stacks) {
   });
 }
 function renderItem(item, index, stackDiv, isTouchDevice) {
+  const itemDiv = document.createElement("div");
+  itemDiv.className = "item-piece";
+  itemDiv.dataset.name = item.name; // Lägg till namn för validering
+  itemDiv.dataset.index = index; // Spara index i stacken
+
   const itemImg = document.createElement("img");
   itemImg.src = item.image;
   itemImg.alt = item.name;
-  itemImg.classList.add("item-piece", `${item.name}`);
+  itemImg.classList.add("item-img", `${item.name}`);
   itemImg.dataset.name = item.name; // Lägg till namn för validering
-  itemImg.dataset.index = index; // Spara index i stacken
-  stackDiv.appendChild(itemImg);
+  // itemImg.dataset.index = index; // Spara index i stacken
+  itemDiv.appendChild(itemImg);
+  stackDiv.appendChild(itemDiv);
 
   // Lägg till händelser baserat på enhet
   if (isTouchDevice) {
-    addTouchEvents(itemImg);
+    addTouchEvents(itemDiv);
   } else {
-    addDragEvents(itemImg);
+    addDragEvents(itemDiv);
   }
 }
 
@@ -384,7 +390,7 @@ function addTouchEvents(item) {
       const touch = e.touches[0];
       initialX = touch.clientX;
       initialY = touch.clientY;
-      originStack = parentStack; // Spara ursprungsstacken
+      originStack = parentStack; 
 
       e.preventDefault();
     }
@@ -398,7 +404,8 @@ function addTouchEvents(item) {
     const deltaY = touch.clientY - initialY;
 
     // Använd transform för att flytta elementet
-    currentDraggedElement.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+    currentDraggedElement.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(1.3)`;
+    currentDraggedElement.style.zIndex = 1000;
 
     e.preventDefault();
   });
