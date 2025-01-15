@@ -77,13 +77,13 @@ async function renderGame() {
             if (isTouchDevice) {
               addTouchEvents(itemImg);
             } else {
-              addDragEvents(itemImg);
+              // addDragEvents(itemImg);
             }
           });
 
           gameContainer.appendChild(stackDiv);
           // Lägg till drop-event till stacken
-          addDropEvents(stackDiv);
+          // addDropEvents(stackDiv);
       });
       // Add two empty stacks
       for (let i = 0; i < 2; i++) {
@@ -92,10 +92,10 @@ async function renderGame() {
           emptySlot.dataset.stackId = stacks.length + i; 
 
           gameContainer.appendChild(emptySlot);
-          addDropEvents(emptySlot); 
+          // addDropEvents(emptySlot); 
       }
   } catch (error) {
-      console.error("Failed to load JSON data:", error);
+      console.error("Failed to load data:", error);
       displayNotification("Failed to load game data. Please try again later.");
   }
 
@@ -285,36 +285,34 @@ function enableDragAndDrop() {
   });
 }
 
-function addDragEvents(item) {
-  item.addEventListener("dragstart", (e) => {
-    const parentStack = item.parentNode;
-    const firstChild = parentStack.querySelector(".item-piece");
-    if (item === firstChild) {
-      item.classList.add("dragging");
-      e.dataTransfer.setData(
-        "text/plain",
-        JSON.stringify({
-          name: item.dataset.name,
-          index: item.dataset.index,
-          stackId: parentStack.dataset.stackId,
-        })
-      );
-      currentDraggedElement = item;
-    } else {
-      e.preventDefault();
-    }
-  });
+// function addDragEvents(item) {
+//   // item.addEventListener("dragstart", (e) => {
+//   //   const parentStack = item.parentNode;
+//   //   const firstChild = parentStack.querySelector(".item-piece");
 
-  item.addEventListener("dragend", () => {
-    item.classList.remove("dragging");
-  });
-}
+//   //   if (item === firstChild) {
+//   //     item.classList.add("dragging");
 
-function addDropEvents(stack) {
-  stack.addEventListener("dragover", (e) => {
-    e.preventDefault(); 
-  });
-}
+//   //     e.dataTransfer.setData("text/plain", `${parentStack.dataset.stackId},${item.dataset.name}`);
+
+//   //     currentDraggedElement = item;
+      
+//   //   } else {
+//   //     e.preventDefault();
+//   //   }
+//   // });
+
+//   item.addEventListener("dragend", () => {
+//     item.classList.remove("dragging");
+//     currentDraggedElement = null;
+//   });
+// }
+
+// function addDropEvents(stack) {
+//   stack.addEventListener("dragover", (e) => {
+//     e.preventDefault(); 
+//   });
+// }
 
 //**__________Update Draggable States__________ */
 function updateDraggableStates() {
