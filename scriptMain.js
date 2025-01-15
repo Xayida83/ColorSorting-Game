@@ -348,6 +348,13 @@ function addTouchEvents(item) {
       initialY = touch.clientY;
       originStack = parentStack; // Spara ursprungsstacken
 
+      // Flytta elementet till body
+    document.body.appendChild(item);
+    item.style.position ="absolut"; // Gör elementet absolut positionerat
+    item.style.zIndex = "1000"; // Placera det längst fram
+    item.style.left = `${touch.clientX}px`; // Initial position
+    item.style.top = `${touch.clientY}px`; // Initial position
+
       e.preventDefault();
     }
   });
@@ -359,8 +366,11 @@ function addTouchEvents(item) {
     const deltaX = touch.clientX - initialX;
     const deltaY = touch.clientY - initialY;
 
-    // Använd transform för att flytta elementet
-    currentDraggedElement.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+    // // Använd transform för att flytta elementet
+    // currentDraggedElement.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+    // Flytta elementet i förhållande till touch-rörelsen
+    currentDraggedElement.style.left = `${touch.clientX}px`;
+    currentDraggedElement.style.top = `${touch.clientY}px`;
 
     e.preventDefault();
   });
@@ -369,26 +379,38 @@ function addTouchEvents(item) {
     if (!currentDraggedElement) return;
 
     // Temporärt återställ transform för att få rätt element vid touch-slut
-    currentDraggedElement.style.transform = "";
+    // currentDraggedElement.style.transform = "";
 
     const touch = e.changedTouches[0];
     const targetStack = document.elementFromPoint(touch.clientX, touch.clientY);
+    console.log(targetStack)
 
     if (targetStack && targetStack.classList.contains("stack")) {
       if (targetStack === originStack) {
         // Släpptes tillbaka till samma stack, ignorera detta drag
-        console.log("Move ignored.");
+        console.log("Move ignored. Dropped in the same stack.");
+        originStack.insertBefore(currentDraggedElement, targetStack.firstChild); // Återställ till ursprungsstacken
       } else {
         // Validera flytt och räkna draget
-        moveItemToStack(currentDraggedElement, targetStack);
+        console.log("Valid move. Dropped into new stack.");
+        moveItemToStack(currentDraggedElement, targetStack); // Flytta objektet till målstacken
         updateMoveCount(); // Uppdatera antal drag
       }
+    } else {
+      // Om ingen giltig stack hittades, återställ till ursprungsstacken
+      console.log("Invalid move. Returning to origin stack.");
+      originStack.insertBefore(currentDraggedElement, originStack.firstChild);
     }
-
+  
+    // Återställ elementets stil och referenser
     currentDraggedElement.classList.remove("dragging");
+    currentDraggedElement.style.position = "";
+    currentDraggedElement.style.zIndex = "";
     currentDraggedElement.style.transform = "";
     currentDraggedElement = null;
-    originStack = null; // Återställ ursprungsstacken
+    originStack = null;
+  
+    e.preventDefault();
   });
 }
 
