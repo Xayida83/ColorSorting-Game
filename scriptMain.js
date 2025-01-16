@@ -392,31 +392,42 @@ function addTouchEvents(item) {
 
   item.addEventListener("touchend", (e) => {
     if (!currentDraggedElement) return;
-  
+
     const touch = e.changedTouches[0];
-    let targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
-  
-    // Navigera till närmaste stack om targetElement inte är en stack
-    const targetStack = targetElement.closest(".stack");
-  
-    if (targetStack) {
-      if (targetStack === originStack) {
-        console.log("Move ignored. Dropped in the same stack.");
-        originStack.insertBefore(currentDraggedElement, originStack.firstChild);
-      } else {
-        console.log("Valid move. Dropped into new stack.");
-        moveItemToStack(currentDraggedElement, targetStack);
-      }
-    } else {
-      console.log("Invalid move. Returning to origin stack.");
-      originStack.insertBefore(currentDraggedElement, originStack.firstChild);
+    const x = touch.clientX;
+    const y = touch.clientY;
+
+    // Hämta elementet vid touch-punkten
+    let targetElement = document.elementFromPoint(x, y);
+
+    // Om targetElement är `img` (dvs. det vi flyttar), leta under den
+    if (targetElement === currentDraggedElement) {
+        targetElement.style.pointerEvents = "none"; // Tillfälligt ignorera `img`
+        targetElement = document.elementFromPoint(x, y); // Få element under `img`
+        currentDraggedElement.style.pointerEvents = ""; // Återställ `img`
     }
 
-    console.log("Target element:", targetElement);
-console.log("Target stack:", targetStack);
-console.log("Origin stack:", originStack);
+    // Försök hitta närmaste stack
+    const targetStack = targetElement?.closest(".stack");
 
-  
+    if (targetStack) {
+        if (targetStack === originStack) {
+            console.log("Move ignored. Dropped in the same stack.");
+            originStack.insertBefore(currentDraggedElement, originStack.firstChild);
+        } else {
+            console.log("Valid move. Dropped into new stack.");
+            moveItemToStack(currentDraggedElement, targetStack);
+        }
+    } else {
+        console.log("No valid stack found. Returning to origin stack.");
+        originStack.insertBefore(currentDraggedElement, originStack.firstChild);
+    }
+
+    // Logga för felsökning
+    console.log("Target element:", targetElement);
+    console.log("Target stack:", targetStack);
+    console.log("Origin stack:", originStack);
+
     // Återställ elementet
     currentDraggedElement.classList.remove("dragging");
     currentDraggedElement.style.position = "";
@@ -425,10 +436,10 @@ console.log("Origin stack:", originStack);
     currentDraggedElement.style.top = "";
     currentDraggedElement = null;
     originStack = null;
-  
+
     e.preventDefault();
-  });
-  
+});
+ 
   
 }
 
