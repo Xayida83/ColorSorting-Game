@@ -363,8 +363,8 @@ function addTouchEvents(item) {
       item.style.position = "absolute";
       item.style.zIndex = "1000";
       item.style.left = `${rect.left - containerRect.left}px`; // Justering för game-container
-      item.style.top = `${rect.top - containerRect.top + window.scrollY}px`; // Justering för scroll och game-container
-  
+      // item.style.top = `${rect.top - containerRect.top + window.scrollY}px`; // Justering för scroll och game-container
+      item.style.top = `${rect.top - containerRect.top}px`;
       e.preventDefault();
     }
   });
