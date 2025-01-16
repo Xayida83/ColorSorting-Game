@@ -410,19 +410,8 @@ function addTouchEvents(item) {
     // Försök hitta närmaste stack
     const targetStack = targetElement?.closest(".stack");
 
-    if (targetStack) {
-        if (targetStack === originStack) {
-            console.log("Move ignored. Dropped in the same stack.");
-            originStack.insertBefore(currentDraggedElement, originStack.firstChild);
-        } else {
-            console.log("Valid move. Dropped into new stack.");
-            moveItemToStack(currentDraggedElement, targetStack);
-        }
-    } else {
-        console.log("No valid stack found. Returning to origin stack.");
-        originStack.insertBefore(currentDraggedElement, originStack.firstChild);
-    }
-
+    moveItemToStackOnTouch(currentDraggedElement, targetStack, originStack);
+    
     // Logga för felsökning
     console.log("Target element:", targetElement);
     console.log("Target stack:", targetStack);
@@ -438,44 +427,42 @@ function addTouchEvents(item) {
     originStack = null;
 
     e.preventDefault();
-});
- 
-  
+  });  
 }
 
-// function moveItemToStackForTouch(item, targetStack, originStack) {
-//   if (!item || !targetStack) return;
+function moveItemToStackOnTouch(item, targetStack, originStack) {
+  if (!item || !originStack) return;
 
-//   const itemsInTarget = targetStack.querySelectorAll('.item-piece');
+  // Om targetStack är giltig, flytta objektet till stacken
+  if (targetStack) {
+    const itemsInTarget = targetStack.querySelectorAll('.item-piece');
 
-//   if (isValidMove(targetStack, item, itemsInTarget)) {
-//     // Validerad flytt - placera i målstack
-//     if (itemsInTarget.length > 0) {
-//       targetStack.insertBefore(item, itemsInTarget[0]);
-//     } else {
-//       targetStack.appendChild(item);
-//     }
+    // Kontrollera om flytten är giltig
+    if (isValidMove(targetStack, item, itemsInTarget)) {
+      console.log("Valid move. Dropped into new stack.");
+      if (itemsInTarget.length > 0) {
+        targetStack.insertBefore(item, itemsInTarget[0]);
+      } else {
+        targetStack.appendChild(item);
+      }
 
-//     moveCount++;
-//     updateMoveCount();
-//     updatePoints();
-//     updateDraggableStates();
-//     checkWinCondition();
-//     checkLoseCondition();
-//   } else {
-//     // Ogiltig flytt - återställ till ursprungsstack
-//     console.log("Invalid move. Returning to origin stack.");
-//     if (originStack) {
-//       const originItems = originStack.querySelectorAll('.item-piece');
-//       if (originItems.length > 0) {
-//         originStack.insertBefore(item, originItems[0]);
-//       } else {
-//         originStack.inser(item);
-//       }
-//     }
-//   }
-// }
-
+      // Uppdatera räknare och status
+      moveCount++;
+      updateMoveCount();
+      checkWinCondition();
+      checkLoseCondition();
+      updatePoints();
+      updateDraggableStates();
+    } else {
+      console.log("Invalid move. Returning to origin stack.");
+      originStack.insertBefore(item, originStack.firstChild);
+    }
+  } else {
+    // Om targetStack är ogiltig, returnera till ursprunglig stack
+    console.log("No valid stack found. Returning to origin stack.");
+    originStack.insertBefore(item, originStack.firstChild);
+  }
+}
 
 
 //**__________Reset Game__________ */
