@@ -50,7 +50,7 @@ async function renderGame() {
   const gameContainer = document.getElementById("game-container");
 
     // Check if we are on a touch device
-  // const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
   try {
        // Limit to selected number of items
@@ -59,19 +59,19 @@ async function renderGame() {
       const stacks = generateShuffledStacks(selectedItems);
 
       // Render stacks
-      // stacks.forEach((stack, stackIndex) => {
-      //     const stackDiv = document.createElement("div");
-      //     stackDiv.className = "stack";
-      //     stackDiv.dataset.stackId = stackIndex; // Identifiera stacken
+      stacks.forEach((stack, stackIndex) => {
+          const stackDiv = document.createElement("div");
+          stackDiv.className = "stack";
+          stackDiv.dataset.stackId = stackIndex; // Identifiera stacken
 
-      //     stack.forEach((item, index) => {
-      //         const itemImg = document.createElement("img");
-      //         itemImg.src = item.image;
-      //         itemImg.alt = item.name;
-      //         itemImg.classList.add("item-piece", `${item.name}`);
-      //         itemImg.dataset.name = item.name; // Lägg till namn för validering
-      //         itemImg.dataset.index = index; // Spara index i stacken
-      //         stackDiv.appendChild(itemImg);
+          stack.forEach((item, index) => {
+              const itemImg = document.createElement("img");
+              itemImg.src = item.image;
+              itemImg.alt = item.name;
+              itemImg.classList.add("item-piece", `${item.name}`);
+              itemImg.dataset.name = item.name; // Lägg till namn för validering
+              itemImg.dataset.index = index; // Spara index i stacken
+              stackDiv.appendChild(itemImg);
 
             // Lägg till händelser baserat på enhet
             if (isTouchDevice) {
