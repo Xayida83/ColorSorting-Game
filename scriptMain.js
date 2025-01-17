@@ -445,14 +445,17 @@ function moveItemToStackOnTouch(item, targetStack, originStack) {
       } else {
         targetStack.appendChild(item);
       }
-
-      // Uppdatera räknare och status
-      moveCount++;
-      updateMoveCount();
-      checkWinCondition();
-      checkLoseCondition();
-      updatePoints();
-      updateDraggableStates();
+      if (targetStack === originStack) {
+        console.log("Move ignored.");
+      } else {
+        // Uppdatera räknare och status
+        moveCount++;
+        updateMoveCount();
+        checkWinCondition();
+        checkLoseCondition();
+        updatePoints();
+        updateDraggableStates();
+      }
     } else {
       console.log("Invalid move. Returning to origin stack.");
       originStack.insertBefore(item, originStack.firstChild);
@@ -484,7 +487,7 @@ function resetGame() {
   
     // Visa spelcontainern
     if (gameContainer) {
-      gameContainer.style.display = 'flex'; // Eller 'block', beroende på din layout
+      gameContainer.style.display = 'flex'; 
     }
   
   renderGame(); 
@@ -595,42 +598,6 @@ function updatePoints() {
 
 
 //*'__________Display Notification__________'	
-// function displayNotification(message) {  
-//   if (restartBtn) {
-//       restartBtn.style.display = 'none';
-//   }
-
-//   const gameContainer = document.getElementById("game-container");
-
-//   gameContainer.innerHTML = "";
-
-//   const notification = document.createElement("div");
-//   notification.className = "notification";
-
-//   const messageElement = document.createElement("p");
-//   messageElement.textContent = message;
-//   notification.appendChild(messageElement);
-
-//   const playAgainButton = document.createElement("button");
-//   playAgainButton.textContent = "Play Again";
-//   playAgainButton.className = "btn play-again";
-//   playAgainButton.addEventListener("click", () => {
-//     resetGame(); 
-//   });
-//   notification.appendChild(playAgainButton);
-
-//   const proceedButton = document.createElement("button");
-//   proceedButton.textContent = "Proceed";
-//   proceedButton.className = "btn proceed";
-//   proceedButton.addEventListener("click", () => {
-//     // Lägg till din logik för att gå vidare
-//     alert("Funktion för att gå vidare implementeras här!");
-//   });
-//   notification.appendChild(proceedButton);
-
-//   gameContainer.appendChild(notification);
-// }
-
 function displayNotification(message) {  
   if (restartBtn) {
       restartBtn.style.display = 'none';
