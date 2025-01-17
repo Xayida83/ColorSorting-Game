@@ -104,7 +104,7 @@ async function renderGame() {
   updateDraggableStates();   
 }
 
-// Generates shuffled stacks
+//* Generates shuffled stacks
 function generateShuffledStacks(items) {
   const allItems = [];
   
@@ -165,9 +165,6 @@ function generateShuffledStacks(items) {
 
   return stacks;
 }
-
-
-
 
 //*'___________Move objekt to stack___________'
 function moveItemToStack(item, targetStack) {
@@ -284,35 +281,6 @@ function enableDragAndDrop() {
     e.target.classList.remove('dragging');
   });
 }
-
-// function addDragEvents(item) {
-//   // item.addEventListener("dragstart", (e) => {
-//   //   const parentStack = item.parentNode;
-//   //   const firstChild = parentStack.querySelector(".item-piece");
-
-//   //   if (item === firstChild) {
-//   //     item.classList.add("dragging");
-
-//   //     e.dataTransfer.setData("text/plain", `${parentStack.dataset.stackId},${item.dataset.name}`);
-
-//   //     currentDraggedElement = item;
-      
-//   //   } else {
-//   //     e.preventDefault();
-//   //   }
-//   // });
-
-//   item.addEventListener("dragend", () => {
-//     item.classList.remove("dragging");
-//     currentDraggedElement = null;
-//   });
-// }
-
-// function addDropEvents(stack) {
-//   stack.addEventListener("dragover", (e) => {
-//     e.preventDefault(); 
-//   });
-// }
 
 //**__________Update Draggable States__________ */
 function updateDraggableStates() {
@@ -467,7 +435,6 @@ function moveItemToStackOnTouch(item, targetStack, originStack) {
   }
 }
 
-
 //**__________Reset Game__________ */
 function resetGame() {
   const gameContainer = document.getElementById("game-container");
@@ -492,7 +459,6 @@ function resetGame() {
   
   renderGame(); 
 }
-
 
 //**__________Check Win Condition__________ */
 function checkWinCondition() {
@@ -537,7 +503,6 @@ function lockStack(stack) {
 
   stack.addEventListener("dragover", (e) => e.preventDefault()); 
 }
-
 
 //**__________Check Lose Condition__________ */
 function checkLoseCondition() {
