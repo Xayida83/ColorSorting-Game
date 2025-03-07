@@ -20,8 +20,8 @@ const items = [
   { "name": "ChocolateBar", "image": "assets/chockolateBar.png" },
   { "name": "IceCream", "image": "assets/iceCream.png" },
   { "name": "SodaCan", "image": "assets/sodaCan.png" },
-  { "name": "CoffeCup", "image": "assets/coffeeCup.webp" },
-  { "name": "Cookie", "image": "assets/chocolateCookie.webp" }
+  { "name": "CoffeCup", "image": "assets/coffeeCup.png" },
+  { "name": "Cookie", "image": "assets/cookie.png" }
 ];
 
 const restartBtn = document.getElementById('restart-btn');
